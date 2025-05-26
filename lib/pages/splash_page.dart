@@ -18,20 +18,32 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkAuthAndNavigate() async {
-    // 3초간 스플래시 화면 표시
-    await Future.delayed(const Duration(seconds: 3));
+    try {
+      // 3초간 스플래시 화면 표시
+      await Future.delayed(const Duration(seconds: 3));
 
-    if (!mounted) return;
+      if (!mounted) return;
 
-    // FirebaseAuth로부터 현재 로그인한 사용자 정보를 가져옵니다
-    User? currentUser = FirebaseAuth.instance.currentUser;
+      // FirebaseAuth로부터 현재 로그인한 사용자 정보를 가져옵니다
+      User? currentUser = FirebaseAuth.instance.currentUser;
 
-    if (currentUser != null) {
-      // 사용자가 로그인한 상태라면 HomePage를 보여줍니다
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      // 사용자가 로그인하지 않은 상태라면 OnboardingPage를 보여줍니다
-      Navigator.pushReplacementNamed(context, '/onboarding');
+      print('Current user: $currentUser'); // 디버깅용
+
+      if (currentUser != null) {
+        // 사용자가 로그인한 상태라면 HomePage를 보여줍니다
+        print('Navigating to home'); // 디버깅용
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        // 사용자가 로그인하지 않은 상태라면 OnboardingPage를 보여줍니다
+        print('Navigating to onboarding'); // 디버깅용
+        Navigator.pushReplacementNamed(context, '/onboarding');
+      }
+    } catch (e) {
+      print('Error in splash navigation: $e'); // 디버깅용
+      // 에러 발생 시 기본적으로 온보딩으로
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/onboarding');
+      }
     }
   }
 
