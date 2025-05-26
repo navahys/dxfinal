@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import '../pages/login_page.dart';
-
-import 'login_page.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -29,6 +26,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Icon(Icons.waving_hand, size: 100, color: Colors.white),
             SizedBox(height: 30),
             Text(
               '환영합니다!',
@@ -129,6 +127,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
     super.dispose();
   }
 
+  // OnboardingPage를 모두 본 다음에는 LoginPage로 이동합니다
+  void _navigateToLogin() {
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,13 +155,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               top: 50.0,
               right: 20.0,
               child: TextButton(
-                onPressed: () {
-                  // 바로 로그인 페이지로 이동
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
+                onPressed: _navigateToLogin,
                 child: const Text(
                   '건너뛰기',
                   style: TextStyle(color: Colors.white70, fontSize: 16),
@@ -176,14 +173,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
               children: [
                 ElevatedButton(
                   onPressed:
-                      _currentPage > 0
-                          ? () {
-                            _pageController.previousPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeIn,
-                            );
-                          }
-                          : null,
+                  _currentPage > 0
+                      ? () {
+                    _pageController.previousPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeIn,
+                    );
+                  }
+                      : null,
                   child: const Text('이전'),
                 ),
                 Text(
@@ -192,14 +189,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ),
                 ElevatedButton(
                   onPressed:
-                      _currentPage < _numPages - 1
-                          ? () {
-                            _pageController.nextPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeIn,
-                            );
-                          }
-                          : null,
+                  _currentPage < _numPages - 1
+                      ? () {
+                    _pageController.nextPage(
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeIn,
+                    );
+                  }
+                      : null,
                   child: const Text('다음'),
                 ),
               ],
@@ -213,13 +210,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               left: 40,
               right: 40,
               child: ElevatedButton(
-                onPressed: () {
-                  // 로그인 페이지로 이동
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
+                onPressed: _navigateToLogin,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: const Color(0xFFee0979),
@@ -245,7 +236,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 _numPages,
-                (index) => buildDot(index: index),
+                    (index) => buildDot(index: index),
               ),
             ),
           ),

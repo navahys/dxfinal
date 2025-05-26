@@ -22,8 +22,12 @@ class TiiunApp extends StatelessWidget {
   Widget build(BuildContext context) {
     // FirebaseAuth로부터 현재 로그인한 사용자 정보를 가져옵니다.
 
-    // 만약 사용자가 로그인하지 않은 상태라면 `LoginPage`를 보여줍니다.
-    // 만약 사용자가 로그인한 상태라면 `FeedPage`를 보여줍니다.
+    // 사용자의 회원가입이나 로그인 여부와 관계없이 'SplashScreen'을 보여줍니다.
+
+    // SplashScreen이 3초간 보여지고, 로그인 여부에 따라 다른 페이지로 이동합니다.
+
+    // 만약 사용자가 로그인하지 않은 상태라면 `OnboardingPage`를 보여주고, OnboardingPage를 모두 본 다음에는 `LoginPage`로 이동합니다.
+    // 만약 사용자가 로그인한 상태라면 `HomePage`를 보여줍니다.
 
     return MaterialApp(
       title: 'Tiiun',
