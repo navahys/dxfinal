@@ -22,23 +22,29 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // 배경색
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/images/logo.png', width: 200), // 로고
-            SizedBox(height: 50),
-            const Text(
-              'Tiiun Buddy',
-              style:
-                TextStyle(
-                  fontSize: 24,
-                  color: AppColors.main900,
-                  fontFamily: AppTypography.fontFamily,
-                ),
-            ),
-          ],
+      body: Container(
+        // 그라데이션 배경
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Color(0xFFFFFFFF),
+              Color(0xFFEBEDEA),
+            ],
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/images/logo.png', width: 70.21, height: 35.26,), // 로고
+              Container(height: 18.74,),
+              Image.asset(
+                'assets/images/tiiun_buddy_logo.png', width: 149, height: 29,),
+            ],
+          ),
         ),
       ),
     );
