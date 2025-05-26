@@ -6,6 +6,7 @@ import 'package:tiiun/pages/home_page.dart';
 import 'package:tiiun/pages/login_page.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/pages/onboarding_page.dart';
+import 'package:tiiun/pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +29,13 @@ class TiiunApp extends StatelessWidget {
       title: 'Tiiun',
       theme: ThemeData(),
       debugShowCheckedModeBanner: false,
-      home: OnboardingPage(),
+      // home: OnboardingPage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => SplashScreen(),
+        '/login': (context) => OnboardingPage(),
+        '/home': (context) => HomePage(),
+      },
     );
   }
 }
