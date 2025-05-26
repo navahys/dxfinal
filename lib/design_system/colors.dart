@@ -2,28 +2,28 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Black Scale
-  static Color black100 = Color.fromRGBO(0, 0, 0, 1.0); // 100%
-  static Color black90 = Color.fromRGBO(0, 0, 0, 0.9); // 90%
-  static Color black80 = Color.fromRGBO(0, 0, 0, 0.8); // 80%
-  static Color black70 = Color.fromRGBO(0, 0, 0, 0.7); // 70%
-  static Color black60 = Color.fromRGBO(0, 0, 0, 0.6); // 60%
-  static Color black50 = Color.fromRGBO(0, 0, 0, 0.5); // 50%
-  static Color black40 = Color.fromRGBO(0, 0, 0, 0.4); // 40%
-  static Color black30 = Color.fromRGBO(0, 0, 0, 0.3); // 30%
-  static Color black20 = Color.fromRGBO(0, 0, 0, 0.2); // 20%
-  static Color black10 = Color.fromRGBO(0, 0, 0, 0.1); // 10%
+  static const Color black100 = Color.fromRGBO(0, 0, 0, 1.0); // 100%
+  static const Color black90 = Color.fromRGBO(0, 0, 0, 0.9); // 90%
+  static const Color black80 = Color.fromRGBO(0, 0, 0, 0.8); // 80%
+  static const Color black70 = Color.fromRGBO(0, 0, 0, 0.7); // 70%
+  static const Color black50 = Color.fromRGBO(0, 0, 0, 0.5); // 50%
+  static const Color black60 = Color.fromRGBO(0, 0, 0, 0.6); // 60%
+  static const Color black40 = Color.fromRGBO(0, 0, 0, 0.4); // 40%
+  static const Color black30 = Color.fromRGBO(0, 0, 0, 0.3); // 30%
+  static const Color black20 = Color.fromRGBO(0, 0, 0, 0.2); // 20%
+  static const Color black10 = Color.fromRGBO(0, 0, 0, 0.1); // 10%
 
   // White Scale
-  static Color white100 = Color.fromRGBO(255, 255, 255, 1.0);
-  static Color white90 = Color.fromRGBO(255, 255, 255, 0.9);
-  static Color white80 = Color.fromRGBO(255, 255, 255, 0.8);
-  static Color white70 = Color.fromRGBO(255, 255, 255, 0.7);
-  static Color white60 = Color.fromRGBO(255, 255, 255, 0.6);
-  static Color white50 = Color.fromRGBO(255, 255, 255, 0.5);
-  static Color white40 = Color.fromRGBO(255, 255, 255, 0.4);
-  static Color white30 = Color.fromRGBO(255, 255, 255, 0.3);
-  static Color white20 = Color.fromRGBO(255, 255, 255, 0.2);
-  static Color white10 = Color.fromRGBO(255, 255, 255, 0.1);
+  static const Color white100 = Color.fromRGBO(255, 255, 255, 1.0);
+  static const Color white90 = Color.fromRGBO(255, 255, 255, 0.9);
+  static const Color white80 = Color.fromRGBO(255, 255, 255, 0.8);
+  static const Color white70 = Color.fromRGBO(255, 255, 255, 0.7);
+  static const Color white60 = Color.fromRGBO(255, 255, 255, 0.6);
+  static const Color white50 = Color.fromRGBO(255, 255, 255, 0.5);
+  static const Color white40 = Color.fromRGBO(255, 255, 255, 0.4);
+  static const Color white30 = Color.fromRGBO(255, 255, 255, 0.3);
+  static const Color white20 = Color.fromRGBO(255, 255, 255, 0.2);
+  static const Color white10 = Color.fromRGBO(255, 255, 255, 0.1);
 
   // Main Colors
   static const Color main900 = Color(0xFF3C881C);

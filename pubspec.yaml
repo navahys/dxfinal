@@ -1,27 +1,101 @@
-name: tiiun
-description: "A new Flutter project."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-
+name: lg_teeun_emotion_care
+description: LG 틔운 - AI 감성 케어 솔루션. 틔운과의 대화를 통한 감성 분석과 식물관리를 결합한 웰빙 서비스.
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0-209.1.beta
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
-  firebase_core: ^3.6.0
-  firebase_auth: ^5.3.1
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  speech_to_text: ^7.0.0-beta.2 #
+  connectivity_plus: ^6.1.4
 
-  cupertino_icons: ^1.0.8
+  # Firebase packages
+  firebase_core: ^3.13.0
+  firebase_auth: ^5.0.0
+  cloud_firestore: ^5.0.0
+  firebase_storage: ^12.4.5
+  firebase_analytics: ^11.0.0
+  firebase_messaging: ^15.2.5
+  firebase_remote_config: ^5.4.3
+  firebase_app_check: ^0.3.0+2
+
+  # State management
+  provider: ^6.1.1
+  flutter_riverpod: ^2.4.10
+
+  # UI packages
+  flutter_svg: ^2.0.9
+  google_fonts: ^6.1.0
+  intl: ^0.20.2
+  cached_network_image: ^3.3.1
+  shimmer: ^3.0.0
+
+  # Voice and audio
+  just_audio: ^0.10.3
+  record: ^6.0.0
+  audio_session: ^0.2.2
+
+  # Speech recognition and synthesis
+  flutter_tts: ^4.2.2
+
+  # API communication
+  http: ^1.2.0
+  dio: ^5.4.0
+
+  # Storage
+  shared_preferences: ^2.2.3
+  path_provider: ^2.1.2
+
+  # Utilities
+  uuid: ^4.3.3
+  logger: ^2.0.2+1
+  url_launcher: ^6.2.4
+  image_picker: ^1.0.7
+  permission_handler: ^12.0.0+1
+  device_info_plus: ^11.4.0
+  package_info_plus: ^8.0.2 # <-- 이 부분을 6.0.0에서 7.0.0으로 변경
+  file_picker: ^10.1.9
+  share_plus: ^11.0.0
+
+  # Notifications
+  flutter_local_notifications: ^19.2.1
+  timezone: ^0.10.1
+
+  # AI and natural language processing
+  langchain: ^0.7.7+2
+  langchain_openai: ^0.7.3
+  langchain_google: ^0.6.4+2
+
+  # JSON serialization
+  json_annotation: ^4.8.1
+  markdown_widget: ^2.3.2+8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.8
+  json_serializable: ^6.7.1
+  flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.3.9
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/
+    - assets/images/
+    - assets/icons/
+    - assets/audio/
+
+  fonts:
+    - family: PRETENDARD
+      fonts:
+        - asset: assets/fonts/PRETENDARD-Regular.ttf
+        - asset: assets/fonts/PRETENDARD-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/PRETENDARD-Bold.ttf
+          weight: 700
