@@ -140,7 +140,7 @@ class AppTypography {
   static const TextStyle largeBtn = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    height: 1.0,
+    height: 1.35,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );

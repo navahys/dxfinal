@@ -46,14 +46,15 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-  // 이전 단계로 이동
+  // 이전 단계로 이동 (Step 1에서는 onboarding으로)
   void _previousStep() {
     if (_currentStep > 1) {
       setState(() {
         _currentStep--;
       });
     } else {
-      Navigator.pop(context);
+      // Step 1에서는 onboarding으로 돌아가지 않고 그대로 유지
+      // Navigator.pop(context);
     }
   }
 
@@ -112,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(message, style: AppTypography.b3),
         backgroundColor: Colors.red,
       ),
     );
@@ -165,48 +166,57 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset('assets/images/logo.png'),
+
+                const SizedBox(height: 210),
+
+                Image.asset('assets/images/logo.png', width: 70.21, height: 35.26),
                 Container(height: 19),
-                Image.asset('assets/images/tiiun_buddy_logo.png'),
-                const SizedBox(height: 60),
+                Image.asset('assets/images/tiiun_buddy_logo.png', width: 148.32, height: 27.98,),
+
+                const SizedBox(height: 240),
 
                 // 소셜 로그인 버튼들
                 _buildSocialLoginButton(
                   'LG 계정 로그인',
-                  Icons.account_circle,
-                  AppColors.point800,
+                  'assets/images/lg_logo.png',
+                  Color(0xFF97282F),
+                  onTap: _nextStep,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 _buildSocialLoginButton(
                   'Google 계정으로 로그인',
-                  Icons.computer,
-                  Colors.red,
+                  'assets/images/google_logo.png',
+                  Color(0xFF477BDF),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10),
                 _buildSocialLoginButton(
                   'Apple 계정으로 로그인',
-                  Icons.apple,
+                  'assets/images/apple_logo.png',
                   Colors.black,
                 ),
               ],
             ),
           ),
 
+          Container(height: 24,),
           // 하단 영역
-          Column(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                '다른 계정으로 로그인 >',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.main700,
-                  fontFamily: AppTypography.fontFamily,
+              Text(
+                '다른 계정으로 로그인',
+                style: AppTypography.largeBtn.copyWith(
+                  color: AppColors.grey400,
                 ),
               ),
-              const SizedBox(height: 24),
-              _buildContinueButton(_nextStep),
+              const SizedBox(width: 10), // 텍스트와 아이콘 사이 간격
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                color: AppColors.grey300,
+                size: 10,
+              ),
             ],
-          ),
+          )
         ],
       ),
     );
@@ -222,7 +232,7 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 상단 헤더
-            _buildHeaderWithTitle('정보\n가기'),
+            _buildHeaderWithTitle('뒤로 가기'),
 
             const SizedBox(height: 60),
 
@@ -288,25 +298,15 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 40),
 
-                const Text(
+                Text(
                   '가입하신 것을 환영합니다!',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  style: AppTypography.h4.copyWith(
                     color: AppColors.main900,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
 
-                const Text(
-                  '귀하의 정보 그룹',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: AppColors.main600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
               ],
             ),
           ),
@@ -324,10 +324,9 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text(
+          title: Text(
             '언어 설정',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
+            style: AppTypography.s1.copyWith(
               color: AppColors.main900,
             ),
           ),
@@ -335,7 +334,10 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisSize: MainAxisSize.min,
             children: _languages.map((language) {
               return ListTile(
-                title: Text(language),
+                title: Text(
+                  language,
+                  style: AppTypography.b3,
+                ),
                 leading: Radio<String>(
                   value: language,
                   groupValue: _selectedLanguage,
@@ -347,7 +349,10 @@ class _LoginPageState extends State<LoginPage> {
                     // 실제 언어 변경 로직은 구현하지 않음
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('$value 선택됨 (데모용)'),
+                        content: Text(
+                          '$value 선택됨 (데모용)',
+                          style: AppTypography.b3,
+                        ),
                         duration: const Duration(seconds: 1),
                       ),
                     );
@@ -367,15 +372,11 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // 공통 헤더 (뒤로가기 + 언어설정)
+  // 공통 헤더 (언어설정만)
   Widget _buildHeader(String text) {
     return Row(
       children: [
-        IconButton(
-          onPressed: _previousStep,
-          icon: const Icon(Icons.arrow_back_ios),
-          color: AppColors.main900,
-        ),
+        const SizedBox(width: 48), // 왼쪽 여백
         Expanded(
           child: GestureDetector(
             onTap: _showLanguageSelector,
@@ -384,8 +385,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Text(
                   _selectedLanguage,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: AppTypography.b2.copyWith(
                     color: AppColors.main700,
                   ),
                 ),
@@ -399,7 +399,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
           ),
         ),
-        const SizedBox(width: 48),
+        const SizedBox(width: 48), // 오른쪽 여백
       ],
     );
   }
@@ -415,9 +415,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         Text(
           title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+          style: AppTypography.s1.copyWith(
             color: AppColors.main900,
             height: 1.2,
           ),
@@ -427,30 +425,45 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   // 소셜 로그인 버튼
-  Widget _buildSocialLoginButton(String text, IconData icon, Color color) {
+  Widget _buildSocialLoginButton(String text, dynamic iconOrPath, Color color, {VoidCallback? onTap}) {
     return Container(
       width: double.infinity,
-      height: 50,
+      height: 48,
       margin: const EdgeInsets.symmetric(horizontal: 20),
-      child: OutlinedButton.icon(
-        onPressed: () {
-          // 소셜 로그인 로직 구현
+      child: ElevatedButton(
+        onPressed: onTap ?? () {
+          print('$text 버튼 클릭됨');
         },
-        icon: Icon(icon, color: color),
-        label: Text(
-          text,
-          style: TextStyle(
-            fontSize: 16,
-            color: color,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide(color: color.withOpacity(0.3)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color, // 버튼 배경색을 각 브랜드 색상으로
+          foregroundColor: Colors.white, // 텍스트 색상은 흰색으로
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(60), // 둥근 모서리
           ),
+          padding: EdgeInsets.zero,
         ),
+        child: Row(
+          children: [
+            SizedBox(width: 12), // 아이콘 왼쪽 패딩 (선택적)
+            Image.asset(
+              iconOrPath,
+              width: 28,
+              height: 28,
+            ),
+            const SizedBox(width: 12), // 아이콘과 텍스트 사이 간격
+            Expanded(
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+                style: AppTypography.largeBtn.copyWith(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+            SizedBox(width: 28), // 오른쪽 공간 확보 (아이콘과 균형 맞추기 위함)
+          ],
+        ),
+
       ),
     );
   }
@@ -466,9 +479,16 @@ class _LoginPageState extends State<LoginPage> {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      style: AppTypography.b1,
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,
+        labelStyle: AppTypography.b3.copyWith(
+          color: AppColors.main600,
+        ),
+        hintStyle: AppTypography.b3.copyWith(
+          color: AppColors.main500, // main400 대신 main500 사용
+        ),
         border: const UnderlineInputBorder(),
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: AppColors.point800),
@@ -483,9 +503,16 @@ class _LoginPageState extends State<LoginPage> {
     return TextFormField(
       controller: _passwordController,
       obscureText: _obscurePassword,
+      style: AppTypography.b1,
       decoration: InputDecoration(
         labelText: '비밀번호 입력',
         hintText: '6자 이상 입력하세요',
+        labelStyle: AppTypography.b3.copyWith(
+          color: AppColors.main600,
+        ),
+        hintStyle: AppTypography.b3.copyWith(
+          color: AppColors.main500, // main400 대신 main500 사용
+        ),
         border: const UnderlineInputBorder(),
         focusedBorder: const UnderlineInputBorder(
           borderSide: BorderSide(color: AppColors.point800),
@@ -522,11 +549,10 @@ class _LoginPageState extends State<LoginPage> {
         ),
         child: isLoading
             ? const CircularProgressIndicator(color: Colors.white)
-            : const Text(
+            : Text(
           '계속하기',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+          style: AppTypography.largeBtn.copyWith(
+            color: Colors.white,
           ),
         ),
       ),
@@ -547,11 +573,10 @@ class _LoginPageState extends State<LoginPage> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-        child: const Text(
+        child: Text(
           '시작하기',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
+          style: AppTypography.largeBtn.copyWith(
+            color: Colors.white,
           ),
         ),
       ),
@@ -571,7 +596,7 @@ class _LoginPageState extends State<LoginPage> {
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return '비밀번호를 입력해주세요';
+      return '비밀번하를 입력해주세요';
     }
     if (value.length < 6) {
       return '비밀번호는 최소 6자 이상이어야 합니다';
