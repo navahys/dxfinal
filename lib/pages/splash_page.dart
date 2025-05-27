@@ -20,27 +20,20 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkAuthAndNavigate() async {
     try {
-      print('🔍 DEBUG: Starting auth check');
-      print('🔍 Current user: ${FirebaseAuth.instance.currentUser?.email}');
-      print('🔍 Current user UID: ${FirebaseAuth.instance.currentUser?.uid}');
-
-      await FirebaseAuth.instance.signOut();
-      print('🔍 SignOut completed');
-
-      await Future.delayed(const Duration(milliseconds: 500));
-      print('🔍 After delay - User: ${FirebaseAuth.instance.currentUser?.email}');
-
       await Future.delayed(const Duration(seconds: 3));
 
-      if (!mounted) return;
-      print('🔍 Navigating to onboarding');
-      Navigator.pushReplacementNamed(context, '/onboarding');
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      print('🔍 Current user in splash: ${currentUser?.email ?? "null"}');
 
-    } catch (e) {
-      print('🔍 ERROR: $e');
-      if (mounted) {
+      if (currentUser != null) {
+        print('🔍 Going to home');
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        print('🔍 Going to onboarding');
         Navigator.pushReplacementNamed(context, '/onboarding');
       }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -64,7 +57,7 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/images/logo.png',
+                'assets/images/tiiun_logo.png',
                 width: 70.21,
                 height: 35.26,
               ), // 로고

@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tiiun/design_system/colors.dart';
+import 'package:tiiun/design_system/typography.dart';
+import 'signup_page.dart';
+import 'login_page.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -8,253 +12,246 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-  final int _numPages = 3; // 전체 온보딩 페이지 수
-
-  // 각 온보딩 페이지 위젯 리스트 - 더 실제적인 온보딩 내용으로 개선
-  final List<Widget> _onboardingPages = [
-    Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF667eea), Color(0xFF764ba2)],
-        ),
-      ),
-      child: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.waving_hand, size: 100, color: Colors.white),
-            SizedBox(height: 30),
-            Text(
-              '환영합니다!',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                '밖에서도 언제나 틔운 버디와 대화를 나누어보세요!',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70, fontSize: 18),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-    Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFF11998e), Color(0xFF38ef7d)],
-        ),
-      ),
-      child: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.rocket_launch, size: 100, color: Colors.white),
-            SizedBox(height: 30),
-            Text(
-              '빠르고 간편하게',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                '나의 감정을 살펴보고 마음을 관리해보아요',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70, fontSize: 18),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-    Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [Color(0xFFee0979), Color(0xFFff6a00)],
-        ),
-      ),
-      child: const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.star, size: 100, color: Colors.white),
-            SizedBox(height: 30),
-            Text(
-              '지금 시작하세요!',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 16),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40),
-              child: Text(
-                '유용한 팁으로 나만의 틔운을 꾸미고 틔워보아요!',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white70, fontSize: 18),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
+  // 언어 설정
+  String _selectedLanguage = '언어 변경';
+  final List<String> _languages = [
+    '한국어',
+    'English',
+    '中国话',
+    '日本語',
   ];
 
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
+  // 회원가입 페이지로 이동
+  void _navigateToSignup() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => SignupPage()),
+    );
   }
 
-  // OnboardingPage를 모두 본 다음에는 LoginPage로 이동합니다
+  // 로그인 페이지로 이동
   void _navigateToLogin() {
-    Navigator.pushReplacementNamed(context, '/login');
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+  }
+
+  // 언어 선택 다이얼로그 표시
+  void _showLanguageSelector() {
+    showDialog(
+      context: context,
+      barrierColor: Color.fromRGBO(0, 0, 0, 0.5),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          content: Container(
+            width: double.maxFinite,
+            height: 284,
+            padding: EdgeInsets.only(top: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 상단 헤더 (제목 + X 버튼)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '언어 설정',
+                        style: AppTypography.h5.copyWith(
+                          color: Color(0xFF1B1C1A),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        child: Icon(
+                          Icons.close,
+                          size: 24,
+                          color: AppColors.grey800,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 16),
+
+                // 언어 목록
+                Expanded(
+                  child: Column(
+                    children: _languages.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      String language = entry.value;
+
+                      return Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedLanguage = language;
+                              });
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '$language 선택됨 (데모용)',
+                                    style: AppTypography.b1,
+                                  ),
+                                  duration: const Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Text(
+                                language,
+                                style: AppTypography.b1,
+                              ),
+                            ),
+                          ),
+                          // 마지막 항목이 아니면 구분선 추가
+                          if (index < _languages.length - 1)
+                            Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: AppColors.grey200,
+                            ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          PageView(
-            controller: _pageController,
-            physics: const PageScrollPhysics(), // 스크롤 물리 명시적 설정
-            allowImplicitScrolling: true, // 암시적 스크롤 허용
-            onPageChanged: (int page) {
-              setState(() {
-                _currentPage = page;
-              });
-            },
-            children: _onboardingPages,
-          ),
-
-          // 건너뛰기 버튼 (마지막 페이지가 아닐 때만 표시)
-          if (_currentPage != _numPages - 1)
-            Positioned(
-              top: 50.0,
-              right: 20.0,
-              child: TextButton(
-                onPressed: _navigateToLogin,
-                child: const Text(
-                  '건너뛰기',
-                  style: TextStyle(color: Colors.white70, fontSize: 16),
-                ),
-              ),
-            ),
-
-          // 디버깅용 네비게이션 버튼들 (임시)
-          Positioned(
-            bottom: 150.0,
-            left: 20,
-            right: 20,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                ElevatedButton(
-                  onPressed:
-                  _currentPage > 0
-                      ? () {
-                    _pageController.previousPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeIn,
-                    );
-                  }
-                      : null,
-                  child: const Text('이전'),
-                ),
-                Text(
-                  '${_currentPage + 1} / $_numPages',
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
-                ),
-                ElevatedButton(
-                  onPressed:
-                  _currentPage < _numPages - 1
-                      ? () {
-                    _pageController.nextPage(
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeIn,
-                    );
-                  }
-                      : null,
-                  child: const Text('다음'),
-                ),
-              ],
-            ),
-          ),
-
-          // 마지막 페이지에만 '로그인하기' 버튼 표시
-          if (_currentPage == _numPages - 1)
-            Positioned(
-              bottom: 100.0,
-              left: 40,
-              right: 40,
-              child: ElevatedButton(
-                onPressed: _navigateToLogin,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: const Color(0xFFee0979),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              // 상단 언어 설정
+              Row(
+                children: [
+                  const SizedBox(width: 103), // 왼쪽 여백
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _showLanguageSelector,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _selectedLanguage,
+                            style: AppTypography.b4.copyWith(
+                              color: AppColors.grey400,
+                            ),
+                          ),
+                          const Icon(
+                            Icons.keyboard_arrow_down,
+                            color: AppColors.grey300,
+                            size: 24,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  elevation: 5,
-                ),
-                child: const Text(
-                  '로그인하기',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
+                  const SizedBox(width: 103), // 오른쪽 여백
+                ],
               ),
-            ),
 
-          // 페이지 인디케이터
-          Positioned(
-            bottom: 50.0,
-            left: 0,
-            right: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                _numPages,
-                    (index) => buildDot(index: index),
+              // 중앙 로고 영역
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // 로고
+                    Container(
+                      child: Image.asset('assets/images/tiiun_logo.png', width: 70.21, height: 35.26,),
+                    ),
+
+                    const SizedBox(height: 19),
+
+                    // 타이틀
+                    Container(
+                      child: Image.asset('assets/images/tiiun_buddy_logo.png', width: 148.32, height: 27.98),
+                    ),
+                  ],
+                ),
               ),
-            ),
+
+              // 하단 버튼들
+              Column(
+                children: [
+                  // 회원가입 버튼
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: _navigateToSignup,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.main700,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        '회원가입',
+                        style: AppTypography.largeBtn.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // 기존 회원 버튼
+                  SizedBox(
+                    width: double.infinity,
+                    height: 48,
+                    child: OutlinedButton(
+                      onPressed: _navigateToLogin,
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.main700,
+                        side: BorderSide(color: AppColors.main700, width: 1.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        '기존 회원',
+                        style: AppTypography.largeBtn.copyWith(
+                          color: AppColors.main900,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
-
-  // 페이지 인디케이터 점 위젯
-  Widget buildDot({int? index}) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      margin: const EdgeInsets.only(right: 8.0),
-      height: 10,
-      width: _currentPage == index ? 25 : 10,
-      decoration: BoxDecoration(
-        color: _currentPage == index ? Colors.white : Colors.white54,
-        borderRadius: BorderRadius.circular(5),
+        ),
       ),
     );
   }

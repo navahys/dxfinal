@@ -13,9 +13,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Firebase Auth 완전 초기화
-  await FirebaseAuth.instance.signOut();
-  print('Firebase Auth reset at app start');
+  // Firebase Auth 완전 초기화 - 자동로그인 끄는 코드
+  // await FirebaseAuth.instance.signOut();
+  // print('Firebase Auth reset at app start');
 
   runApp(const TiiunApp());
 }

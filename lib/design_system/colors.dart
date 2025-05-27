@@ -26,11 +26,16 @@ class AppColors {
   static const Color white10 = Color.fromRGBO(255, 255, 255, 0.1);
 
   // Main Colors
-  static const Color main900 = Color(0xFF3C881C);
-  static const Color main800 = Color(0xFF50A02F);
-  static const Color main700 = Color(0xFF69C743);
-  static const Color main600 = Color(0xFFA6E68C);
-  static const Color main500 = Color(0xFFC9F5B7);
+  static const Color main900 = Color(0xFF058383);
+  static const Color main800 = Color(0xFF059D9D);
+  static const Color main700 = Color(0xFF03ADAD);
+  static const Color main600 = Color(0xFF10BEBE);
+  static const Color main500 = Color(0xFF2ACECE);
+  static const Color main400 = Color(0xFF52D8D8);
+  static const Color main300 = Color(0xFF7EE5E5);
+  static const Color main200 = Color(0xFFAFEFEF);
+  static const Color main100 = Color(0xFFCEF4F4);
+
 
   // Point Colors
   static const Color point900 = Color(0xFFED5A01);

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
 import 'package:tiiun/pages/lgsignin_page.dart';
-import 'signup_page.dart'; // 회원가입 페이지 import
+import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 const SizedBox(height: 210),
 
-                Image.asset('assets/images/logo.png', width: 70.21, height: 35.26),
+                Image.asset('assets/images/tiiun_logo.png', width: 70.21, height: 35.26),
                 Container(height: 19),
                 Image.asset('assets/images/tiiun_buddy_logo.png', width: 148.32, height: 27.98),
 
