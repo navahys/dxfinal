@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
@@ -19,28 +20,24 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _checkAuthAndNavigate() async {
     try {
-      // 3초간 스플래시 화면 표시
+      print('🔍 DEBUG: Starting auth check');
+      print('🔍 Current user: ${FirebaseAuth.instance.currentUser?.email}');
+      print('🔍 Current user UID: ${FirebaseAuth.instance.currentUser?.uid}');
+
+      await FirebaseAuth.instance.signOut();
+      print('🔍 SignOut completed');
+
+      await Future.delayed(const Duration(milliseconds: 500));
+      print('🔍 After delay - User: ${FirebaseAuth.instance.currentUser?.email}');
+
       await Future.delayed(const Duration(seconds: 3));
 
       if (!mounted) return;
+      print('🔍 Navigating to onboarding');
+      Navigator.pushReplacementNamed(context, '/onboarding');
 
-      // FirebaseAuth로부터 현재 로그인한 사용자 정보를 가져옵니다
-      User? currentUser = FirebaseAuth.instance.currentUser;
-
-      print('Current user: $currentUser'); // 디버깅용
-
-      if (currentUser != null) {
-        // 사용자가 로그인한 상태라면 HomePage를 보여줍니다
-        print('Navigating to home'); // 디버깅용
-        Navigator.pushReplacementNamed(context, '/home');
-      } else {
-        // 사용자가 로그인하지 않은 상태라면 OnboardingPage를 보여줍니다
-        print('Navigating to onboarding'); // 디버깅용
-        Navigator.pushReplacementNamed(context, '/onboarding');
-      }
     } catch (e) {
-      print('Error in splash navigation: $e'); // 디버깅용
-      // 에러 발생 시 기본적으로 온보딩으로
+      print('🔍 ERROR: $e');
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/onboarding');
       }
