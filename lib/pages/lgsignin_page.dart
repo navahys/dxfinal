@@ -17,6 +17,20 @@ class _LGSigninPageState extends State<LGSigninPage> {
   bool _isLoading = false;
   bool _obscurePassword = true;
 
+  // 유효성 검사 상태 추가
+  bool _isEmailValid = false;
+  bool _isPasswordValid = false;
+  String? _emailError;
+  String? _passwordError;
+
+  @override
+  void initState() {
+    super.initState();
+    // 텍스트 변경 감지
+    _emailController.addListener(_validateForm);
+    _passwordController.addListener(_validateForm);
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -24,9 +38,43 @@ class _LGSigninPageState extends State<LGSigninPage> {
     super.dispose();
   }
 
+  // 실시간 폼 유효성 검사
+  void _validateForm() {
+    setState(() {
+      // 이메일 검사
+      String email = _emailController.text.trim();
+      if (email.isEmpty) {
+        _isEmailValid = false;
+        _emailError = null;
+      } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+        _isEmailValid = false;
+        _emailError = '이메일 형식을 확인해주세요';
+      } else {
+        _isEmailValid = true;
+        _emailError = null;
+      }
+
+      // 비밀번호 검사
+      String password = _passwordController.text;
+      if (password.isEmpty) {
+        _isPasswordValid = false;
+        _passwordError = null;
+      } else if (password.length < 6) {
+        _isPasswordValid = false;
+        _passwordError = '비밀번호는 최소 6자 이상이어야 합니다';
+      } else {
+        _isPasswordValid = true;
+        _passwordError = null;
+      }
+    });
+  }
+
+  // 로그인 버튼 활성화 여부
+  bool get _isFormValid => _isEmailValid && _isPasswordValid;
+
   // Firebase 로그인 처리
   Future<void> _handleSignIn() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_isFormValid) return;
 
     setState(() {
       _isLoading = true;
@@ -39,7 +87,6 @@ class _LGSigninPageState extends State<LGSigninPage> {
       );
 
       if (mounted) {
-        // 로그인 성공 시 홈으로 이동
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/home',
@@ -81,7 +128,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, style: AppTypography.b2),
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.point900,
       ),
     );
   }
@@ -98,40 +145,96 @@ class _LGSigninPageState extends State<LGSigninPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 뒤로가기 버튼
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back_ios),
-                      color: AppColors.main900,
-                    ),
-                    Text(
-                      'LG 계정 로그인',
-                      style: AppTypography.s1.copyWith(
-                        color: AppColors.main900,
-                        height: 1.2,
+                // 상단 헤더 (가운데 정렬)
+                Container(
+                  height: 56,
+                  child: Stack(
+                    children: [
+                      // 뒤로가기 버튼 (왼쪽)
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        child: IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(Icons.arrow_back_ios),
+                          iconSize: 24,
+                          color: AppColors.grey700,
+                        ),
                       ),
-                    ),
-                  ],
+                      // 제목 (가운데)
+                      Center(
+                        child: Text(
+                          'LG 계정 로그인',
+                          style: AppTypography.b2.copyWith(
+                            color: AppColors.grey900,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
-                const SizedBox(height: 60),
+                const SizedBox(height: 220),
 
                 // 입력 필드들
                 Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // ID 라벨
+                      Text(
+                        'ID',
+                        style: AppTypography.b2.copyWith(
+                          color: AppColors.grey800,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+
+                      // 이메일 입력 필드
                       _buildTextFormField(
                         controller: _emailController,
-                        labelText: '이메일 입력',
-                        hintText: 'example@email.com',
+                        hintText: '이메일 입력',
                         keyboardType: TextInputType.emailAddress,
-                        validator: _validateEmail,
+                        hasError: _emailError != null,
                       ),
+
+                      // 이메일 에러 메시지
+                      if (_emailError != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          _emailError!,
+                          style: AppTypography.c1.copyWith(
+                            color: AppColors.point900,
+                          ),
+                        ),
+                      ],
+
                       const SizedBox(height: 24),
+
+                      // PASSWORD 라벨
+                      Text(
+                        'PASSWORD',
+                        style: AppTypography.b2.copyWith(
+                          color: AppColors.grey900,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // 비밀번호 입력 필드
                       _buildPasswordField(),
+
+                      // 비밀번호 에러 메시지
+                      if (_passwordError != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          _passwordError!,
+                          style: AppTypography.c1.copyWith(
+                            color: AppColors.point900,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -148,56 +251,103 @@ class _LGSigninPageState extends State<LGSigninPage> {
 
   Widget _buildTextFormField({
     required TextEditingController controller,
-    required String labelText,
     required String hintText,
     TextInputType? keyboardType,
-    String? Function(String?)? validator,
+    bool hasError = false,
   }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      style: AppTypography.b1,
-      decoration: InputDecoration(
-        labelText: labelText,
-        hintText: hintText,
-        labelStyle: AppTypography.b3.copyWith(color: AppColors.main900),
-        hintStyle: AppTypography.b3.copyWith(color: AppColors.main600),
-        border: const UnderlineInputBorder(),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: AppColors.point800),
+    return Container(
+      height: 48,
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        style: AppTypography.b1,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: AppTypography.b1.copyWith(
+            color: AppColors.grey400,
+          ),
+          border: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: hasError ? Colors.red : AppColors.grey300,
+              width: 1.5,
+            ),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: hasError ? Colors.red : AppColors.grey300,
+              width: 1,
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: hasError ? Colors.red : AppColors.point900,
+              width: 2,
+            ),
+          ),
+          contentPadding: EdgeInsets.only(left: 8),
         ),
       ),
-      validator: validator,
     );
   }
 
   Widget _buildPasswordField() {
-    return TextFormField(
-      controller: _passwordController,
-      obscureText: _obscurePassword,
-      style: AppTypography.b1,
-      decoration: InputDecoration(
-        labelText: '비밀번호 입력',
-        hintText: '비밀번호를 입력하세요',
-        labelStyle: AppTypography.b3.copyWith(color: AppColors.main900),
-        hintStyle: AppTypography.b3.copyWith(color: AppColors.main600),
-        border: const UnderlineInputBorder(),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: AppColors.point800),
-        ),
-        suffixIcon: IconButton(
-          icon: Icon(
-            _obscurePassword ? Icons.visibility : Icons.visibility_off,
-            color: AppColors.main600,
+    return Container(
+      height: 48,
+      child: Stack(
+        children: [
+          TextFormField(
+            controller: _passwordController,
+            obscureText: _obscurePassword,
+            style: AppTypography.b2,
+            decoration: InputDecoration(
+              hintText: '패스워드 입력',
+              hintStyle: AppTypography.b1.copyWith(
+                color: AppColors.grey400,
+              ),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: _passwordError != null ? AppColors.point900 : AppColors.grey300,
+                  width: 1,
+                ),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: _passwordError != null ? AppColors.point900 : AppColors.grey300,
+                  width: 1,
+                ),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: _passwordError != null ? AppColors.point900 : AppColors.grey300,
+                  width: 2,
+                ),
+              ),
+              contentPadding: EdgeInsets.only(left: 8),
+            ),
           ),
-          onPressed: () {
-            setState(() {
-              _obscurePassword = !_obscurePassword;
-            });
-          },
-        ),
+
+          // 아이콘 대신 이미지 사용
+          Positioned(
+            right: 0,
+            top: 12, // 이미지를 텍스트와 같은 높이로 조정
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
+              child: Image.asset(
+                _obscurePassword
+                    ? 'assets/icons/functions/dontshow_icon.png'
+                    : 'assets/icons/functions/show_icon.png',
+                width: 20,
+                height: 20,
+                color: AppColors.grey500,
+              ),
+            ),
+          ),
+        ],
       ),
-      validator: _validatePassword,
     );
   }
 
@@ -206,38 +356,24 @@ class _LGSigninPageState extends State<LGSigninPage> {
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: _isLoading ? null : _handleSignIn,
+        onPressed: (_isFormValid && !_isLoading) ? _handleSignIn : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(0xFF97282F), // LG 빨간색
+          backgroundColor: _isFormValid ? AppColors.main700 : AppColors.grey400,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(8),
           ),
+          elevation: 0,
         ),
         child: _isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
+            ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
             : Text(
           '로그인',
-          style: AppTypography.largeBtn.copyWith(color: Colors.white),
+          style: AppTypography.largeBtn.copyWith(
+            color: _isFormValid ? Colors.white : AppColors.grey500,
+          ),
         ),
       ),
     );
-  }
-
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return '이메일을 입력해주세요';
-    }
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return '유효한 이메일을 입력해주세요';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return '비밀번호를 입력해주세요';
-    }
-    return null;
   }
 }

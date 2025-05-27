@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 class ChatScreen extends StatefulWidget {
   final String initialMessage;
+  final String? conversationId;
+  final List<Map<String, dynamic>>? conversationData;
 
   const ChatScreen({
     super.key,
     required this.initialMessage,
+    this.conversationId,
+    this.conversationData,
   });
 
   @override
