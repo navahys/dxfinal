@@ -12,6 +12,11 @@ import 'package:tiiun/pages/splash_page.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Firebase Auth 완전 초기화
+  await FirebaseAuth.instance.signOut();
+  print('Firebase Auth reset at app start');
+
   runApp(const TiiunApp());
 }
 
