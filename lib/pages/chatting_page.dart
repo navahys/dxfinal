@@ -1,34 +1,41 @@
 import 'package:flutter/material.dart';
 
-class ChatConversationScreen extends StatefulWidget {
-  final String conversationId;
-  final String title;
-  final String? initialMessage;
+class ChatScreen extends StatefulWidget {
+  final String initialMessage;
 
-  const ChatConversationScreen({
+  const ChatScreen({
     super.key,
-    required this.conversationId,
-    required this.title,
-    this.initialMessage,
+    required this.initialMessage,
   });
 
   @override
-  State<ChatConversationScreen> createState() => _ChatConversationScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatConversationScreenState extends State<ChatConversationScreen> {
+class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-  final List<ChatMessage> _messages = [];
+  final List<Map<String, dynamic>> _messages = []; // Map으로 변경
+
+  void _sendMessage() {
+    if (_messageController.text.trim().isNotEmpty) {
+      setState(() {
+        _messages.add({
+          'text': _messageController.text.trim(),
+          'isUser': true, // 사용자 메시지
+        });
+      });
+      _messageController.clear();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    // 초기 메시지가 있으면 추가
-    if (widget.initialMessage != null && widget.initialMessage!.isNotEmpty) {
-      _addMessage(widget.initialMessage!, true);
-      // 자동 응답 (데모용)
-      Future.delayed(Duration(seconds: 1), () {
-        _addMessage('안녕하세요! 틔운이에요. 무엇을 도와드릴까요? 🌱', false);
+    // 초기 메시지 추가 (사용자 메시지)
+    if (widget.initialMessage.isNotEmpty) {
+      _messages.add({
+        'text': widget.initialMessage,
+        'isUser': true,
       });
     }
   }
@@ -39,63 +46,55 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
     super.dispose();
   }
 
-  void _addMessage(String text, bool isUser) {
-    setState(() {
-      _messages.add(ChatMessage(
-        text: text,
-        isUser: isUser,
-        timestamp: DateTime.now(),
-      ));
-    });
-  }
+  Widget _buildMessageBubble(Map<String, dynamic> message) {
+    final isUser = message['isUser'] as bool;
 
-  void _sendMessage() {
-    if (_messageController.text.trim().isNotEmpty) {
-      final messageText = _messageController.text.trim();
-      _addMessage(messageText, true);
-      _messageController.clear();
-
-      // 자동 응답 (데모용)
-      Future.delayed(Duration(seconds: 1), () {
-        _addMessage('좋은 질문이네요! 더 자세히 알려주세요. 🤔', false);
-      });
-    }
+    return Container(
+      margin: EdgeInsets.only(
+        bottom: 8,
+        left: isUser ? 60 : 0,  // 사용자 메시지는 왼쪽 여백
+        right: isUser ? 0 : 60, // AI 메시지는 오른쪽 여백
+      ),
+      child: Align(
+        alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: isUser ? Color(0xFF10BCBE) : Colors.grey.shade200,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(16),
+              topRight: Radius.circular(16),
+              bottomLeft: isUser ? Radius.circular(16) : Radius.circular(4),
+              bottomRight: isUser ? Radius.circular(4) : Radius.circular(16),
+            ),
+          ),
+          child: Text(
+            message['text'],
+            style: TextStyle(
+              color: isUser ? Colors.white : Colors.black87,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF3F5F2),
       appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Colors.green.shade50,
-        foregroundColor: Colors.green.shade800,
+        title: Text('틔운이와 채팅'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 1,
       ),
       body: Column(
         children: [
-          // 메시지 목록
+          // 메시지 리스트
           Expanded(
-            child: _messages.isEmpty
-                ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.chat_bubble_outline,
-                    size: 64,
-                    color: Colors.grey.shade400,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    '틔운이와 대화를 시작해보세요!',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            )
-                : ListView.builder(
+            child: ListView.builder(
               padding: EdgeInsets.all(16),
               itemCount: _messages.length,
               itemBuilder: (context, index) {
@@ -104,7 +103,6 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
             ),
           ),
 
-          // 메시지 입력 영역
           Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -116,32 +114,23 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
+                    onSubmitted: (value) => _sendMessage(),
                     decoration: InputDecoration(
-                      hintText: '메시지를 입력하세요...',
+                      hintText: '메시지를 입력하세요',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
+                        borderRadius: BorderRadius.circular(20),
                         borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     ),
-                    onSubmitted: (value) => _sendMessage(),
                   ),
                 ),
                 SizedBox(width: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade600,
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    onPressed: _sendMessage,
-                    icon: Icon(
-                      Icons.send,
-                      color: Colors.white,
-                    ),
+                GestureDetector(
+                  onTap: _sendMessage,
+                  child: CircleAvatar(
+                    backgroundColor: Color(0xFF10BCBE),
+                    child: Icon(Icons.send, color: Colors.white),
                   ),
                 ),
               ],
@@ -151,70 +140,4 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
       ),
     );
   }
-
-  Widget _buildMessageBubble(ChatMessage message) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment:
-        message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        children: [
-          if (!message.isUser) ...[
-            CircleAvatar(
-              radius: 16,
-              backgroundColor: Colors.green.shade100,
-              child: Icon(
-                Icons.eco,
-                size: 16,
-                color: Colors.green.shade600,
-              ),
-            ),
-            SizedBox(width: 8),
-          ],
-          Flexible(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: message.isUser
-                    ? Colors.green.shade600
-                    : Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                message.text,
-                style: TextStyle(
-                  color: message.isUser ? Colors.white : Colors.black87,
-                ),
-              ),
-            ),
-          ),
-          if (message.isUser) ...[
-            SizedBox(width: 8),
-            CircleAvatar(
-              radius: 16,
-              backgroundColor: Colors.blue.shade100,
-              child: Icon(
-                Icons.person,
-                size: 16,
-                color: Colors.blue.shade600,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-// 메시지 모델 클래스
-class ChatMessage {
-  final String text;
-  final bool isUser;
-  final DateTime timestamp;
-
-  ChatMessage({
-    required this.text,
-    required this.isUser,
-    required this.timestamp,
-  });
 }
