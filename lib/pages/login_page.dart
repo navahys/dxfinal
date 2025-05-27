@@ -25,10 +25,10 @@ class _LoginPageState extends State<LoginPage> {
   // 언어 설정
   String _selectedLanguage = '대한민국/한국어';
   final List<String> _languages = [
-    '대한민국/한국어',
-    'English/영어',
-    '中文/중국어',
-    '日本語/일본어',
+    '한국어',
+    'English',
+    '中国话',
+    '日本語',
   ];
 
   @override
@@ -322,50 +322,99 @@ class _LoginPageState extends State<LoginPage> {
   void _showLanguageSelector() {
     showDialog(
       context: context,
+      barrierColor: Color.fromRGBO(0, 0, 0, 0.5),
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            '언어 설정',
-            style: AppTypography.s1.copyWith(
-              color: AppColors.main900,
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: _languages.map((language) {
-              return ListTile(
-                title: Text(
-                  language,
-                  style: AppTypography.b3,
-                ),
-                leading: Radio<String>(
-                  value: language,
-                  groupValue: _selectedLanguage,
-                  onChanged: (String? value) {
-                    setState(() {
-                      _selectedLanguage = value!;
-                    });
-                    Navigator.of(context).pop();
-                    // 실제 언어 변경 로직은 구현하지 않음
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          '$value 선택됨 (데모용)',
-                          style: AppTypography.b3,
-                        ),
-                        duration: const Duration(seconds: 1),
-                      ),
-                    );
-                  },
-                  activeColor: AppColors.point800,
-                ),
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-              );
-            }).toList(),
-          ),
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          content: Container(
+            width: double.maxFinite,
+            height: 284,
+            padding: EdgeInsets.only(top: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 상단 헤더 (제목 + X 버튼)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '언어 설정',
+                        style: AppTypography.h5.copyWith(
+                          color: Color(0xFF1B1C1A),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        child: Icon(
+                          Icons.close,
+                          size: 24,
+                          color: AppColors.grey800,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 16),
+
+                // 언어 목록
+                Expanded(
+                  child: Column(
+                    children: _languages.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      String language = entry.value;
+
+                      return Column(
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                _selectedLanguage = language;
+                              });
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '$language 선택됨 (데모용)',
+                                    style: AppTypography.b1,
+                                  ),
+                                  duration: const Duration(seconds: 1),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Text(
+                                language,
+                                style: AppTypography.b1,
+                              ),
+                            ),
+                          ),
+                          // 마지막 항목이 아니면 구분선 추가
+                          if (index < _languages.length - 1)
+                            Divider(
+                              height: 1,
+                              thickness: 1,
+                              color: AppColors.grey200,
+                            ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -386,13 +435,13 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   _selectedLanguage,
                   style: AppTypography.b2.copyWith(
-                    color: AppColors.main700,
+                    color: AppColors.grey400,
                   ),
                 ),
                 const SizedBox(width: 4),
                 const Icon(
                   Icons.keyboard_arrow_down,
-                  color: AppColors.main700,
+                  color: AppColors.grey300,
                   size: 20,
                 ),
               ],
@@ -447,10 +496,9 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(width: 12), // 아이콘 왼쪽 패딩 (선택적)
             Image.asset(
               iconOrPath,
-              width: 28,
-              height: 28,
+              width: 26,
+              height: 26,
             ),
-            const SizedBox(width: 12), // 아이콘과 텍스트 사이 간격
             Expanded(
               child: Text(
                 text,
