@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _obscurePassword = true;
 
   // 언어 설정
-  String _selectedLanguage = '대한민국/한국어';
+  String _selectedLanguage = '언어 변경';
   final List<String> _languages = [
     '한국어',
     'English',
