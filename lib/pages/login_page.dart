@@ -29,15 +29,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  // 언어 설정
-  String _selectedLanguage = '언어 변경';
-  final List<String> _languages = [
-    '한국어',
-    'English',
-    '中国话',
-    '日本語',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,9 +45,6 @@ class _LoginPageState extends State<LoginPage> {
       padding: const EdgeInsets.all(24.0),
       child: Column(
         children: [
-          // 상단 헤더
-          _buildHeader(_selectedLanguage),
-
           // 중앙 로고 영역
           Expanded(
             child: Column(
@@ -100,19 +88,17 @@ class _LoginPageState extends State<LoginPage> {
           ),
 
           Container(height: 24),
-          // 하단 영역 - 회원가입으로 변경
+          // 다른 계정으로 로그인
           GestureDetector(
-            onTap: _navigateToSignup, // 회원가입 페이지로 이동
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '계정이 없으신가요? 회원가입',
-                  style: AppTypography.largeBtn.copyWith(
+                  '다른 계정으로 로그인',
+                  style: AppTypography.mediumBtn.copyWith(
                     color: AppColors.grey400,
                   ),
                 ),
-                const SizedBox(width: 10),
                 Icon(
                   Icons.arrow_forward_ios_rounded,
                   color: AppColors.grey300,
@@ -140,141 +126,6 @@ class _LoginPageState extends State<LoginPage> {
       context,
       '/home',
           (route) => false,
-    );
-  }
-
-  // 언어 선택 다이얼로그 표시
-  void _showLanguageSelector() {
-    showDialog(
-      context: context,
-      barrierColor: Color.fromRGBO(0, 0, 0, 0.5),
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          content: Container(
-            width: double.maxFinite,
-            height: 284,
-            padding: EdgeInsets.only(top: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 상단 헤더 (제목 + X 버튼)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        '언어 설정',
-                        style: AppTypography.h5.copyWith(
-                          color: Color(0xFF1B1C1A),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    GestureDetector(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        child: Icon(
-                          Icons.close,
-                          size: 24,
-                          color: AppColors.grey800,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: 16),
-
-                // 언어 목록
-                Expanded(
-                  child: Column(
-                    children: _languages.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      String language = entry.value;
-
-                      return Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                _selectedLanguage = language;
-                              });
-                              Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '$language 선택됨 (데모용)',
-                                    style: AppTypography.b1,
-                                  ),
-                                  duration: const Duration(seconds: 1),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              child: Text(
-                                language,
-                                style: AppTypography.b1,
-                              ),
-                            ),
-                          ),
-                          // 마지막 항목이 아니면 구분선 추가
-                          if (index < _languages.length - 1)
-                            Divider(
-                              height: 1,
-                              thickness: 1,
-                              color: AppColors.grey200,
-                            ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  // 공통 헤더 (언어설정만)
-  Widget _buildHeader(String text) {
-    return Row(
-      children: [
-        const SizedBox(width: 48), // 왼쪽 여백
-        Expanded(
-          child: GestureDetector(
-            onTap: _showLanguageSelector,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  _selectedLanguage,
-                  style: AppTypography.b2.copyWith(
-                    color: AppColors.grey400,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                const Icon(
-                  Icons.keyboard_arrow_down,
-                  color: AppColors.grey300,
-                  size: 20,
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(width: 48), // 오른쪽 여백
-      ],
     );
   }
 
