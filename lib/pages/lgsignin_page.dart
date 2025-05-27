@@ -59,9 +59,12 @@ class _LGSigninPageState extends State<LGSigninPage> {
       if (password.isEmpty) {
         _isPasswordValid = false;
         _passwordError = null;
-      } else if (password.length < 6) {
+      } else if (password.length < 8) {
         _isPasswordValid = false;
-        _passwordError = '비밀번호는 최소 6자 이상이어야 합니다';
+        _passwordError = '비밀번호는 최소 8자 이상이어야 합니다';
+      } else if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)').hasMatch(password)) {
+        _isPasswordValid = false;
+        _passwordError = '영문과 숫자를 포함해야 합니다';
       } else {
         _isPasswordValid = true;
         _passwordError = null;
@@ -198,6 +201,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
                         hintText: '이메일 입력',
                         keyboardType: TextInputType.emailAddress,
                         hasError: _emailError != null,
+                        isValid: _isEmailValid,
                       ),
 
                       // 이메일 에러 메시지
@@ -211,7 +215,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
                         ),
                       ],
 
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 29.5),
 
                       // PASSWORD 라벨
                       Text(
@@ -254,7 +258,13 @@ class _LGSigninPageState extends State<LGSigninPage> {
     required String hintText,
     TextInputType? keyboardType,
     bool hasError = false,
+    bool isValid = false,
   }) {
+    Color getBorderColor() {
+      if (hasError) return AppColors.point800;
+      if (isValid) return AppColors.main700;
+      return AppColors.grey300;
+    }
     return Container(
       height: 48,
       child: TextFormField(
@@ -268,20 +278,20 @@ class _LGSigninPageState extends State<LGSigninPage> {
           ),
           border: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: hasError ? Colors.red : AppColors.grey300,
+              color: getBorderColor(),
               width: 1.5,
             ),
           ),
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: hasError ? Colors.red : AppColors.grey300,
-              width: 1,
+              color: getBorderColor(),
+              width: 1.5,
             ),
           ),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: hasError ? Colors.red : AppColors.point900,
-              width: 2,
+              color: AppColors.point800,
+              width: 1.5,
             ),
           ),
           contentPadding: EdgeInsets.only(left: 8),
@@ -291,6 +301,11 @@ class _LGSigninPageState extends State<LGSigninPage> {
   }
 
   Widget _buildPasswordField() {
+    Color getBorderColor() {
+      if (_passwordError != null) return AppColors.point800;
+      if (_isPasswordValid) return AppColors.main700;  // 또는 AppColors.point900
+      return AppColors.grey300;
+    }
     return Container(
       height: 48,
       child: Stack(
@@ -306,20 +321,20 @@ class _LGSigninPageState extends State<LGSigninPage> {
               ),
               border: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: _passwordError != null ? AppColors.point900 : AppColors.grey300,
-                  width: 1,
+                  color: getBorderColor(),
+                  width: 1.5,
                 ),
               ),
               enabledBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: _passwordError != null ? AppColors.point900 : AppColors.grey300,
-                  width: 1,
+                  color: getBorderColor(),
+                  width: 1.5,
                 ),
               ),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: _passwordError != null ? AppColors.point900 : AppColors.grey300,
-                  width: 2,
+                  color: _passwordError != null ? AppColors.point900 : AppColors.point900,
+                  width: 1.5,
                 ),
               ),
               contentPadding: EdgeInsets.only(left: 8),

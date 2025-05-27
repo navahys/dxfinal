@@ -24,6 +24,26 @@ class _SignupPageState extends State<SignupPage> {
   bool _obscurePassword = true;
   bool _obscurePasswordConfirm = true;
 
+  // 유효성 검사 상태 추가
+  bool _isEmailValid = false;
+  bool _isPasswordValid = false;
+  bool _isPasswordConfirmValid = false;
+  bool _isNicknameValid = false;
+  String? _emailError;
+  String? _passwordError;
+  String? _passwordConfirmError;
+  String? _nicknameError;
+
+  @override
+  void initState() {
+    super.initState();
+    // 텍스트 변경 감지
+    _emailController.addListener(_validateForm);
+    _passwordController.addListener(_validateForm);
+    _passwordConfirmController.addListener(_validateForm);
+    _nicknameController.addListener(_validateForm);
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -32,6 +52,69 @@ class _SignupPageState extends State<SignupPage> {
     _nicknameController.dispose();
     super.dispose();
   }
+
+  // 실시간 폼 유효성 검사
+  void _validateForm() {
+    setState(() {
+      // 이메일 검사
+      String email = _emailController.text.trim();
+      if (email.isEmpty) {
+        _isEmailValid = false;
+        _emailError = null;
+      } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+        _isEmailValid = false;
+        _emailError = '이메일 형식을 확인해주세요';
+      } else {
+        _isEmailValid = true;
+        _emailError = null;
+      }
+
+      // 비밀번호 검사
+      String password = _passwordController.text;
+      if (password.isEmpty) {
+        _isPasswordValid = false;
+        _passwordError = null;
+      } else if (password.length < 8) {
+        _isPasswordValid = false;
+        _passwordError = '비밀번호는 최소 8자 이상이어야 합니다';
+      } else if (!RegExp(r'^(?=.*[A-Za-z])(?=.*\d)').hasMatch(password)) {
+        _isPasswordValid = false;
+        _passwordError = '영문과 숫자를 포함해야 합니다';
+      } else {
+        _isPasswordValid = true;
+        _passwordError = null;
+      }
+
+      // 비밀번호 확인 검사
+      String passwordConfirm = _passwordConfirmController.text;
+      if (passwordConfirm.isEmpty) {
+        _isPasswordConfirmValid = false;
+        _passwordConfirmError = null;
+      } else if (passwordConfirm != password) {
+        _isPasswordConfirmValid = false;
+        _passwordConfirmError = '비밀번호가 일치하지 않습니다';
+      } else {
+        _isPasswordConfirmValid = true;
+        _passwordConfirmError = null;
+      }
+
+      // 닉네임 검사
+      String nickname = _nicknameController.text.trim();
+      if (nickname.isEmpty) {
+        _isNicknameValid = false;
+        _nicknameError = null;
+      } else if (nickname.length < 2) {
+        _isNicknameValid = false;
+        _nicknameError = '닉네임은 최소 2자 이상이어야 합니다';
+      } else {
+        _isNicknameValid = true;
+        _nicknameError = null;
+      }
+    });
+  }
+
+  // 가입하기 버튼 활성화 여부
+  bool get _isFormValid => _isEmailValid && _isPasswordValid && _isPasswordConfirmValid && _isNicknameValid;
 
   // 다음 단계로 이동
   void _nextStep() {
@@ -53,7 +136,7 @@ class _SignupPageState extends State<SignupPage> {
 
   // Firebase 회원가입 처리
   Future<void> _handleSignUp() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_isFormValid) return;
 
     setState(() {
       _isLoading = true;
@@ -106,8 +189,8 @@ class _SignupPageState extends State<SignupPage> {
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: AppTypography.b3),
-        backgroundColor: Colors.red,
+        content: Text(message, style: AppTypography.b2),
+        backgroundColor: AppColors.point900,
       ),
     );
   }
@@ -145,207 +228,423 @@ class _SignupPageState extends State<SignupPage> {
 
   // Step 1: 정보 입력 화면
   Widget _buildStep1() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // 상단 헤더
-            _buildHeaderWithTitle('뒤로 가기'),
+    return Expanded(
+        child: Container(
+          padding: const EdgeInsets.all(24.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // 상단 헤더
+                _buildHeaderWithTitle(),
 
-            const SizedBox(height: 60),
+                const SizedBox(height: 130),
 
-            // 입력 필드들
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildTextFormField(
-                    controller: _emailController,
-                    labelText: '이메일 입력',
-                    hintText: 'example@email.com',
-                    keyboardType: TextInputType.emailAddress,
-                    validator: _validateEmail,
+                // 입력 필드들
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 이메일 라벨
+                      Text(
+                        '이메일',
+                        style: AppTypography.b2.copyWith(
+                          color: AppColors.grey800,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+
+                      // 이메일 입력 필드
+                      _buildTextFormField(
+                        controller: _emailController,
+                        hintText: '이메일 입력',
+                        keyboardType: TextInputType.emailAddress,
+                        hasError: _emailError != null,
+                        isValid: _isEmailValid,
+                      ),
+
+                      // 이메일 에러 메시지
+                      if (_emailError != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          _emailError!,
+                          style: AppTypography.c1.copyWith(
+                            color: AppColors.point900,
+                          ),
+                        ),
+                      ],
+
+                      const SizedBox(height: 28),
+
+                      // 비밀번호 라벨
+                      Text(
+                        '비밀번호',
+                        style: AppTypography.b2.copyWith(
+                          color: AppColors.grey900,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+
+                      // 비밀번호 입력 필드
+                      _buildPasswordField(),
+
+                      // 비밀번호 에러 메시지
+                      if (_passwordError != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          _passwordError!,
+                          style: AppTypography.c1.copyWith(
+                            color: AppColors.point900,
+                          ),
+                        ),
+                      ],
+
+                      const SizedBox(height: 24),
+
+                      // 비밀번호 확인 라벨
+                      Text(
+                        '비밀번호 확인',
+                        style: AppTypography.b2.copyWith(
+                          color: AppColors.grey900,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+
+                      // 비밀번호 확인 입력 필드
+                      _buildPasswordConfirmField(),
+
+                      // 비밀번호 확인 에러 메시지
+                      if (_passwordConfirmError != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          _passwordConfirmError!,
+                          style: AppTypography.c1.copyWith(
+                            color: AppColors.point900,
+                          ),
+                        ),
+                      ],
+
+                      const SizedBox(height: 24),
+
+                      // 닉네임 라벨
+                      Text(
+                        '닉네임',
+                        style: AppTypography.b2.copyWith(
+                          color: AppColors.grey900,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+
+                      // 닉네임 입력 필드
+                      _buildTextFormField(
+                        controller: _nicknameController,
+                        hintText: '닉네임 입력 (한글, 영문, 숫자)',
+                        hasError: _nicknameError != null,
+                        isValid: _isNicknameValid,
+                      ),
+
+                      // 닉네임 에러 메시지
+                      if (_nicknameError != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          _nicknameError!,
+                          style: AppTypography.c1.copyWith(
+                            color: AppColors.point900,
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
-                  const SizedBox(height: 24),
-                  _buildPasswordField(),
-                  const SizedBox(height: 24),
-                  _buildPasswordConfirmField(),
-                  const SizedBox(height: 24),
-                  _buildTextFormField(
-                    controller: _nicknameController,
-                    labelText: '닉네임 입력',
-                    hintText: '사용할 닉네임을 입력하세요',
-                    validator: _validateNickname,
-                  ),
-                ],
-              ),
+                ),
+
+                // 하단 가입하기 버튼
+                _buildSignUpButton(),
+              ],
             ),
-
-            // 하단 계속하기 버튼
-            _buildContinueButton(_isLoading ? null : _handleSignUp, isLoading: _isLoading),
-          ],
+          ),
         ),
-      ),
-    );
+      );
   }
 
   // Step 2: 완료 화면
   Widget _buildStep2() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          const SizedBox(height: 60),
+          const SizedBox(height: 80),
 
-          // 중앙 완료 메시지
           Expanded(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 완료 아이콘
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    color: AppColors.point800.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_circle,
-                    size: 60,
-                    color: AppColors.point800,
-                  ),
-                ),
-                const SizedBox(height: 40),
-
                 Text(
-                  '환영합니다!',
+                  "환영해요!\n틔운버디와 추억을 만들어요",
                   style: AppTypography.h4.copyWith(
-                    color: AppColors.main900,
+                    color: AppColors.grey900,
                   ),
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.left,
                 ),
-                const SizedBox(height: 16),
 
+                const SizedBox(height: 149),
+
+                Image.asset('assets/images/illust_welcome.png', width: 200, height: 200,),
+
+                const SizedBox(height: 219),
               ],
             ),
           ),
 
           // 시작하기 버튼
           _buildStartButton(),
+
+          SizedBox(height: 36,)
         ],
       ),
     );
   }
 
   // 헤더 + 타이틀
-  Widget _buildHeaderWithTitle(String title) {
-    return Row(
-      children: [
-        IconButton(
-          onPressed: _previousStep,
-          icon: const Icon(Icons.arrow_back_ios),
-          color: AppColors.main900,
-        ),
-        Text(
-          title,
-          style: AppTypography.s1.copyWith(
-            color: AppColors.main900,
-            height: 1.2,
+  Widget _buildHeaderWithTitle() {
+    return Container(
+      height: 56,
+      child: Stack(
+        children: [
+          // 뒤로가기 버튼 (왼쪽)
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: IconButton(
+              onPressed: _previousStep,
+              icon: const Icon(Icons.arrow_back_ios),
+              iconSize: 24,
+              color: AppColors.grey700,
+            ),
+            // Image.asset('assets/icons/functions/back_icon.png', height: 24, width: 24,),
           ),
-        ),
-      ],
+          // 제목 (가운데)
+          Center(
+            child: Text(
+              '회원가입',
+              style: AppTypography.b2.copyWith(
+                color: AppColors.grey900,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   // 일반 텍스트 필드
   Widget _buildTextFormField({
     required TextEditingController controller,
-    required String labelText,
     required String hintText,
     TextInputType? keyboardType,
-    String? Function(String?)? validator,
+    bool hasError = false,
+    bool isValid = false,
   }) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: keyboardType,
-      style: AppTypography.b1,
-      decoration: InputDecoration(
-        labelText: labelText,
-        hintText: hintText,
-        labelStyle: AppTypography.b3.copyWith(
-          color: AppColors.main900,
-        ),
-        hintStyle: AppTypography.b3.copyWith(
-          color: AppColors.main600,
-        ),
-        border: const UnderlineInputBorder(),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: AppColors.point800),
+    Color getBorderColor() {
+      if (hasError) return AppColors.point800;
+      if (isValid) return AppColors.main700;
+      return AppColors.grey300;
+    }
+
+    return Container(
+      // height: 48,
+      child: TextFormField(
+        controller: controller,
+        keyboardType: keyboardType,
+        style: AppTypography.b1,
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: AppTypography.b1.copyWith(
+            color: AppColors.grey400,
+          ),
+          border: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: getBorderColor(),
+              width: 1.5,
+            ),
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: getBorderColor(),
+              width: 1.5,
+            ),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(
+              color: AppColors.point800,
+              width: 1.5,
+            ),
+          ),
+          contentPadding: EdgeInsets.only(left: 8),
         ),
       ),
-      validator: validator,
     );
   }
 
   // 비밀번호 필드
   Widget _buildPasswordField() {
-    return TextFormField(
-      controller: _passwordController,
-      obscureText: _obscurePassword,
-      style: AppTypography.b1,
-      decoration: InputDecoration(
-        labelText: '비밀번호 입력',
-        hintText: '6자 이상 입력하세요',
-        labelStyle: AppTypography.b3.copyWith(
-          color: AppColors.main900,
-        ),
-        hintStyle: AppTypography.b3.copyWith(
-          color: AppColors.main600,
-        ),
-        border: const UnderlineInputBorder(),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: AppColors.point800),
-        ),
-        suffixIcon: IconButton(
-          icon: Icon(
-            _obscurePassword ? Icons.visibility : Icons.visibility_off,
-            color: AppColors.main600,
+    Color getBorderColor() {
+      if (_passwordError != null) return AppColors.point800;
+      if (_isPasswordValid) return AppColors.main700;
+      return AppColors.grey300;
+    }
+
+    return Container(
+      height: 48,
+      child: Stack(
+        children: [
+          TextFormField(
+            controller: _passwordController,
+            obscureText: _obscurePassword,
+            style: AppTypography.b2,
+            decoration: InputDecoration(
+              hintText: '비밀번호 입력 (숫자, 영문 포함 8자 이상)',
+              hintStyle: AppTypography.b1.copyWith(
+                color: AppColors.grey400,
+              ),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: getBorderColor(),
+                  width: 1.5,
+                ),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: getBorderColor(),
+                  width: 1.5,
+                ),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: _passwordError != null ? AppColors.point900 : AppColors.point900,
+                  width: 1.5,
+                ),
+              ),
+              contentPadding: EdgeInsets.only(left: 8),
+            ),
           ),
-          onPressed: () {
-            setState(() {
-              _obscurePassword = !_obscurePassword;
-            });
-          },
-        ),
+
+          // 비밀번호 표시/숨김 아이콘
+          Positioned(
+            right: 0,
+            top: 12,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _obscurePassword = !_obscurePassword;
+                });
+              },
+              child: Image.asset(
+                _obscurePassword
+                    ? 'assets/icons/functions/dontshow_icon.png'
+                    : 'assets/icons/functions/show_icon.png',
+                width: 24,
+                height: 24,
+                color: AppColors.grey500,
+              ),
+            ),
+          ),
+        ],
       ),
-      validator: _validatePassword,
+    );
+  }
+
+  // 비밀번호 확인 필드
+  Widget _buildPasswordConfirmField() {
+    Color getBorderColor() {
+      if (_passwordConfirmError != null) return AppColors.point800;
+      if (_isPasswordConfirmValid) return AppColors.main700;
+      return AppColors.grey300;
+    }
+
+    return Container(
+      height: 48,
+      child: Stack(
+        children: [
+          TextFormField(
+            controller: _passwordConfirmController,
+            obscureText: _obscurePasswordConfirm,
+            style: AppTypography.b2,
+            decoration: InputDecoration(
+              hintText: '동일한 비밀번호 입력',
+              hintStyle: AppTypography.b1.copyWith(
+                color: AppColors.grey400,
+              ),
+              border: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: getBorderColor(),
+                  width: 1.5,
+                ),
+              ),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: getBorderColor(),
+                  width: 1.5,
+                ),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(
+                  color: _passwordConfirmError != null ? AppColors.point900 : AppColors.point900,
+                  width: 1.5,
+                ),
+              ),
+              contentPadding: EdgeInsets.only(left: 8),
+            ),
+          ),
+
+          // 비밀번호 표시/숨김 아이콘
+          Positioned(
+            right: 0,
+            top: 12,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _obscurePasswordConfirm = !_obscurePasswordConfirm;
+                });
+              },
+              child: Image.asset(
+                _obscurePasswordConfirm
+                    ? 'assets/icons/functions/dontshow_icon.png'
+                    : 'assets/icons/functions/show_icon.png',
+                width: 24,
+                height: 24,
+                color: AppColors.grey500,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   // 가입하기 버튼
-  Widget _buildContinueButton(VoidCallback? onPressed, {bool isLoading = false}) {
+  Widget _buildSignUpButton() {
     return SizedBox(
       width: double.infinity,
       height: 50,
       child: ElevatedButton(
-        onPressed: onPressed,
+        onPressed: (_isFormValid && !_isLoading) ? _handleSignUp : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.point800,
+          backgroundColor: _isFormValid ? AppColors.main700 : AppColors.grey400,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(8),
           ),
+          elevation: 0,
         ),
-        child: isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
+        child: _isLoading
+            ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
             : Text(
           '가입하기',
           style: AppTypography.largeBtn.copyWith(
-            color: Colors.white,
+            color: _isFormValid ? Colors.white : AppColors.grey500,
           ),
         ),
       ),
@@ -356,11 +655,11 @@ class _SignupPageState extends State<SignupPage> {
   Widget _buildStartButton() {
     return SizedBox(
       width: double.infinity,
-      height: 50,
+      height: 48,
       child: ElevatedButton(
         onPressed: _navigateToHome,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.point800,
+          backgroundColor: AppColors.main700,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -374,81 +673,5 @@ class _SignupPageState extends State<SignupPage> {
         ),
       ),
     );
-  }
-
-  // 비밀번호 확인 필드 ✅ 새로 추가
-  Widget _buildPasswordConfirmField() {
-    return TextFormField(
-      controller: _passwordConfirmController,
-      obscureText: _obscurePasswordConfirm,
-      style: AppTypography.b1,
-      decoration: InputDecoration(
-        labelText: '비밀번호 확인',
-        hintText: '비밀번호를 다시 입력하세요',
-        labelStyle: AppTypography.b3.copyWith(
-          color: AppColors.main900,
-        ),
-        hintStyle: AppTypography.b3.copyWith(
-          color: AppColors.main600,
-        ),
-        border: const UnderlineInputBorder(),
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: AppColors.point800),
-        ),
-        suffixIcon: IconButton(
-          icon: Icon(
-            _obscurePasswordConfirm ? Icons.visibility : Icons.visibility_off,
-            color: AppColors.main600,
-          ),
-          onPressed: () {
-            setState(() {
-              _obscurePasswordConfirm = !_obscurePasswordConfirm;
-            });
-          },
-        ),
-      ),
-      validator: _validatePasswordConfirm,
-    );
-  }
-
-  // 유효성 검사 함수들
-  String? _validateEmail(String? value) {
-    if (value == null || value.isEmpty) {
-      return '이메일을 입력해주세요';
-    }
-    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-      return '유효한 이메일을 입력해주세요';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return '비밀번호를 입력해주세요';
-    }
-    if (value.length < 6) {
-      return '비밀번호는 최소 6자 이상이어야 합니다';
-    }
-    return null;
-  }
-
-  String? _validatePasswordConfirm(String? value) {
-    if (value == null || value.isEmpty) {
-      return '비밀번호 확인을 입력해주세요';
-    }
-    if (value != _passwordController.text) {
-      return '비밀번호가 일치하지 않습니다';
-    }
-    return null;
-  }
-
-  String? _validateNickname(String? value) {
-    if (value == null || value.isEmpty) {
-      return '닉네임을 입력해주세요';
-    }
-    if (value.length < 2) {
-      return '닉네임은 최소 2자 이상이어야 합니다';
-    }
-    return null;
   }
 }
