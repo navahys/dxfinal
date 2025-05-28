@@ -253,9 +253,7 @@ class _SignupPageState extends State<SignupPage> {
                     // 이메일 라벨
                     Text(
                       '이메일',
-                      style: AppTypography.b2.copyWith(
-                        color: AppColors.grey800,
-                      ),
+                      style: AppTypography.b2.withColor(AppColors.grey800,),
                     ),
                     const SizedBox(height: 4),
 
@@ -273,9 +271,7 @@ class _SignupPageState extends State<SignupPage> {
                       const SizedBox(height: 4),
                       Text(
                         _emailError!,
-                        style: AppTypography.c1.copyWith(
-                          color: AppColors.point900,
-                        ),
+                        style: AppTypography.c1.withColor(AppColors.point900,),
                       ),
                     ],
 
@@ -284,9 +280,7 @@ class _SignupPageState extends State<SignupPage> {
                     // 비밀번호 라벨
                     Text(
                       '비밀번호',
-                      style: AppTypography.b2.copyWith(
-                        color: AppColors.grey900,
-                      ),
+                      style: AppTypography.b2.withColor(AppColors.grey900,),
                     ),
                     const SizedBox(height: 4),
 
@@ -298,9 +292,7 @@ class _SignupPageState extends State<SignupPage> {
                       const SizedBox(height: 4),
                       Text(
                         _passwordError!,
-                        style: AppTypography.c1.copyWith(
-                          color: AppColors.point900,
-                        ),
+                        style: AppTypography.c1.withColor(AppColors.point900,),
                       ),
                     ],
 
@@ -309,9 +301,7 @@ class _SignupPageState extends State<SignupPage> {
                     // 비밀번호 확인 라벨
                     Text(
                       '비밀번호 확인',
-                      style: AppTypography.b2.copyWith(
-                        color: AppColors.grey900,
-                      ),
+                      style: AppTypography.b2.withColor(AppColors.grey900,),
                     ),
                     const SizedBox(height: 4),
 
@@ -323,9 +313,7 @@ class _SignupPageState extends State<SignupPage> {
                       const SizedBox(height: 4),
                       Text(
                         _passwordConfirmError!,
-                        style: AppTypography.c1.copyWith(
-                          color: AppColors.point900,
-                        ),
+                        style: AppTypography.c1.withColor(AppColors.point900,),
                       ),
                     ],
 
@@ -334,9 +322,7 @@ class _SignupPageState extends State<SignupPage> {
                     // 닉네임 라벨
                     Text(
                       '닉네임',
-                      style: AppTypography.b2.copyWith(
-                        color: AppColors.grey900,
-                      ),
+                      style: AppTypography.b2.withColor(AppColors.grey900,),
                     ),
                     const SizedBox(height: 4),
 
@@ -353,9 +339,7 @@ class _SignupPageState extends State<SignupPage> {
                       const SizedBox(height: 4),
                       Text(
                         _nicknameError!,
-                        style: AppTypography.c1.copyWith(
-                          color: AppColors.point900,
-                        ),
+                        style: AppTypography.c1.withColor(AppColors.point900,),
                       ),
                     ],
 
@@ -445,9 +429,7 @@ class _SignupPageState extends State<SignupPage> {
           Center(
             child: Text(
               '회원가입',
-              style: AppTypography.b2.copyWith(
-                color: AppColors.grey900,
-              ),
+              style: AppTypography.b2.withColor(AppColors.grey900,),
             ),
           ),
         ],
@@ -476,9 +458,7 @@ class _SignupPageState extends State<SignupPage> {
         style: AppTypography.b1,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: AppTypography.b1.copyWith(
-            color: AppColors.grey400,
-          ),
+          hintStyle: AppTypography.b1.withColor(AppColors.grey400,),
           border: UnderlineInputBorder(
             borderSide: BorderSide(
               color: getBorderColor(),
@@ -521,9 +501,7 @@ class _SignupPageState extends State<SignupPage> {
             style: AppTypography.b2,
             decoration: InputDecoration(
               hintText: '비밀번호 입력 (숫자, 영문 포함 8자 이상)',
-              hintStyle: AppTypography.b1.copyWith(
-                color: AppColors.grey400,
-              ),
+              hintStyle: AppTypography.b1.withColor(AppColors.grey400,),
               border: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: getBorderColor(),
@@ -589,9 +567,7 @@ class _SignupPageState extends State<SignupPage> {
             style: AppTypography.b2,
             decoration: InputDecoration(
               hintText: '동일한 비밀번호 입력',
-              hintStyle: AppTypography.b1.copyWith(
-                color: AppColors.grey400,
-              ),
+              hintStyle: AppTypography.b1.withColor(AppColors.grey400,),
               border: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: getBorderColor(),
@@ -658,8 +634,8 @@ class _SignupPageState extends State<SignupPage> {
             ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
             : Text(
           '가입하기',
-          style: AppTypography.largeBtn.copyWith(
-            color: _isFormValid ? Colors.white : AppColors.grey500,
+          style: AppTypography.largeBtn.withColor(
+            _isFormValid ? Colors.white : AppColors.grey500,
           ),
         ),
       ),
@@ -682,9 +658,7 @@ class _SignupPageState extends State<SignupPage> {
         ),
         child: Text(
           '시작하기',
-          style: AppTypography.largeBtn.copyWith(
-            color: Colors.white,
-          ),
+          style: AppTypography.largeBtn.withColor(Colors.white,),
         ),
       ),
     );

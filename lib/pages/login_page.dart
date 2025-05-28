@@ -98,9 +98,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Text(
                           '다른 계정으로 로그인',
-                          style: AppTypography.mediumBtn.copyWith(
-                            color: AppColors.grey400,
-                          ),
+                          style: AppTypography.mediumBtn.withColor(AppColors.grey400,),
                         ),
                         const SizedBox(width: 12),
                         Icon(
@@ -167,9 +165,7 @@ class _LoginPageState extends State<LoginPage> {
               child: Text(
                 text,
                 textAlign: TextAlign.center,
-                style: AppTypography.largeBtn.copyWith(
-                  color: Colors.white,
-                ),
+                style: AppTypography.largeBtn.withColor(Colors.white,),
               ),
             ),
             SizedBox(width: 28),

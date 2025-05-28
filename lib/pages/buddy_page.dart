@@ -19,7 +19,7 @@ class BuddyPage extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 '버디',
-                style: AppTypography.h1.copyWith(color: AppColors.grey900),
+                style: AppTypography.h1.withColor(AppColors.grey900),
               ),
               const SizedBox(height: 32),
               Container(
@@ -46,7 +46,7 @@ class BuddyPage extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       '버디 기능 준비 중입니다',
-                      style: AppTypography.b2.copyWith(color: AppColors.grey600),
+                      style: AppTypography.b2.withColor(AppColors.grey600),
                     ),
                   ],
                 ),

@@ -162,9 +162,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
                       // ID 라벨
                       Text(
                         'ID',
-                        style: AppTypography.b2.copyWith(
-                          color: AppColors.grey800,
-                        ),
+                        style: AppTypography.b2.withColor(AppColors.grey800,),
                       ),
                       const SizedBox(height: 4),
 
@@ -182,9 +180,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
                         const SizedBox(height: 4),
                         Text(
                           _emailError!,
-                          style: AppTypography.c1.copyWith(
-                            color: AppColors.point900,
-                          ),
+                          style: AppTypography.c1.withColor(AppColors.point900,),
                         ),
                       ],
 
@@ -193,9 +189,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
                       // PASSWORD 라벨
                       Text(
                         'PASSWORD',
-                        style: AppTypography.b2.copyWith(
-                          color: AppColors.grey900,
-                        ),
+                        style: AppTypography.b2.withColor(AppColors.grey900,),
                       ),
                       const SizedBox(height: 16),
 
@@ -207,9 +201,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
                         const SizedBox(height: 4),
                         Text(
                           _passwordError!,
-                          style: AppTypography.c1.copyWith(
-                            color: AppColors.point900,
-                          ),
+                          style: AppTypography.c1.withColor(AppColors.point900,),
                         ),
                       ],
                     ],
@@ -247,9 +239,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
           Center(
             child: Text(
               'LG 계정 로그인',
-              style: AppTypography.b2.copyWith(
-                color: AppColors.grey900,
-              ),
+              style: AppTypography.b2.withColor(AppColors.grey900,),
             ),
           ),
         ],
@@ -278,9 +268,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
         style: AppTypography.b1,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: AppTypography.b1.copyWith(
-            color: AppColors.grey400,
-          ),
+          hintStyle: AppTypography.b1.withColor(AppColors.grey400,),
           border: UnderlineInputBorder(
             borderSide: BorderSide(
               color: getBorderColor(),
@@ -323,9 +311,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
             style: AppTypography.b2,
             decoration: InputDecoration(
               hintText: '패스워드 입력',
-              hintStyle: AppTypography.b1.copyWith(
-                color: AppColors.grey400,
-              ),
+              hintStyle: AppTypography.b1.withColor(AppColors.grey400,),
               border: UnderlineInputBorder(
                 borderSide: BorderSide(
                   color: getBorderColor(),
@@ -391,8 +377,8 @@ class _LGSigninPageState extends State<LGSigninPage> {
             ? const CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
             : Text(
           '로그인',
-          style: AppTypography.largeBtn.copyWith(
-            color: _isFormValid ? Colors.white : AppColors.grey400,
+          style: AppTypography.largeBtn.withColor(
+            _isFormValid ? Colors.white : AppColors.grey400,
           ),
         ),
       ),
