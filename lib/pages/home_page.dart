@@ -246,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(width: 2),
                           Text('적정 온도',
                             style: AppTypography.b3.copyWith(
-                                color: AppColors.grey700,
+                              color: AppColors.grey700,
                             ),
                           ),
 
@@ -259,7 +259,7 @@ class _HomePageState extends State<HomePage> {
                           ),
 
                           const SizedBox(width: 12,),
-                          
+
                           SvgPicture.asset(
                             'assets/icons/functions/light_on.svg',
                             width: 24,
@@ -315,35 +315,36 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 16),
 
-                    // 식물 관리 팁 카드들
-                    _buildPlantTipCard(
-                      '겨울철 물주기, 깍지벌레 관리 팁',
-                      'assets/images/plant1.jpg',
-                    ),
-                    const SizedBox(height: 16),
-
-                    _buildPlantTipCard(
-                      '겨울 걱정 No! 겨울철 식물 이사 고민 줄여요',
-                      'assets/images/plant2.jpg',
-                    ),
-                    const SizedBox(height: 16),
-
-                    _buildPlantTipCard(
-                      '실내 공기 정화 식물로 겨울철 건강 지키기',
-                      'assets/images/plant3.jpg',
-                    ),
-                    const SizedBox(height: 16),
-
-                    _buildPlantTipCard(
-                      '토분이 관리하기 쉽다고? 누가!',
-                      'assets/images/plant4.jpg',
+                    // 2열 그리드로 식물 관리 팁 카드들 배치
+                    GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.75, // 세로가 더 긴 비율
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        _buildPlantTipCard(
+                          '겨울철 물주기, 깍지벌레 관리 팁',
+                          'assets/images/plant_tip1.svg',
+                        ),
+                        _buildPlantTipCard(
+                          '겨울 걱정 NO! 겨울철 식물 이사 고민 줄여요',
+                          'assets/images/plant2.svg',
+                        ),
+                        _buildPlantTipCard(
+                          '실내 공기 정화 식물로 겨울철 건강 지키기',
+                          'assets/images/plant3.svg',
+                        ),
+                        _buildPlantTipCard(
+                          '토분이 관리하기 쉽다고? 누가!',
+                          'assets/images/plant4.svg',
+                        ),
+                      ],
                     ),
 
                     // 하단 여백 (네비게이션 바와 겹치지 않게)
                     const SizedBox(height: 100),
-
-                    SizedBox(height: 12,),
-
                   ],
                 ),
               ),
@@ -388,10 +389,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 식물 관리 팁 카드 위젯
+  // 2열 그리드용 식물 관리 팁 카드 위젯 (세로형)
   Widget _buildPlantTipCard(String title, String imagePath) {
     return Container(
-      height: 120,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -403,44 +403,57 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 이미지
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: AppColors.grey100,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                bottomLeft: Radius.circular(16),
+          Expanded(
+            flex: 3,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: AppColors.grey100,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
               ),
-            ),
-            child: const Icon(
-              Icons.eco,
-              size: 48,
-              color: Colors.green,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: SvgPicture.asset(
+                    imagePath,
+                    fit: BoxFit.contain,
+                    placeholderBuilder: (context) => Container(
+                      color: AppColors.grey100,
+                      child: const Icon(
+                        Icons.eco,
+                        size: 48,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
           // 텍스트 내용
           Expanded(
+            flex: 2,
             child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    title,
-                    style: AppTypography.b1.copyWith(
-                      color: AppColors.grey900,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 8),
-                ],
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                title,
+                style: AppTypography.b3.copyWith(
+                  color: AppColors.grey900,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
