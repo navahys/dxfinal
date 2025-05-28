@@ -228,25 +228,26 @@ class _SignupPageState extends State<SignupPage> {
 
   // Step 1: 정보 입력 화면
   Widget _buildStep1() {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(24.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 상단 헤더
-              _buildHeaderWithTitle(),
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 상단 헤더 (고정)
+            _buildHeaderWithTitle(),
 
-              const SizedBox(height: 130),
-
-              // 입력 필드들
-              Expanded(
+            // 입력 필드들 (자동 확장)
+            Expanded(
+              child: SingleChildScrollView(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // 중앙 정렬을 위한 여백
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+
                     // 이메일 라벨
                     Text(
                       '이메일',
@@ -355,14 +356,17 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
                     ],
+
+                    // 하단 여백
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.1),
                   ],
                 ),
               ),
+            ),
 
-              // 하단 가입하기 버튼
-              _buildSignUpButton(),
-            ],
-          ),
+            // 하단 가입하기 버튼 (고정)
+            _buildSignUpButton(),
+          ],
         ),
       ),
     );
@@ -370,46 +374,50 @@ class _SignupPageState extends State<SignupPage> {
 
   // Step 2: 완료 화면
   Widget _buildStep2() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        children: [
-          const SizedBox(height: 80),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "환영해요!\n틔운버디와 추억을 만들어요",
-                  style: AppTypography.h4.copyWith(
-                    color: AppColors.grey900,
-                    height: 1.5,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-
-                const SizedBox(height: 149),
-
-                Center(
-                  child: Image.asset(
-                    'assets/images/illust_welcome.png',
-                    width: 200,
-                    height: 200,
-                  ),
-                ),
-
-                const SizedBox(height: 219),
-              ],
+    return Stack(
+      children: [
+        // 환영 문구 (절대 위치로 고정)
+        Positioned(
+          top: 80,
+          left: 20,
+          child: Text(
+            "환영해요!\n틔운버디와 추억을 만들어요",
+            style: AppTypography.h4.copyWith(
+              color: AppColors.grey900,
+              height: 1.5,
             ),
+            textAlign: TextAlign.left,
           ),
+        ),
 
-          // 시작하기 버튼
-          _buildStartButton(),
+        // 나머지 콘텐츠 (중앙 이미지와 하단 버튼)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              // 상단 여백 (자동 조절)
+              Expanded(flex: 1, child: SizedBox()),
 
-          const SizedBox(height: 36),
-        ],
-      ),
+              // 환영 이미지 (고정)
+              Center(
+                child: Image.asset(
+                  'assets/images/illust_welcome.png',
+                  width: 200,
+                  height: 200,
+                ),
+              ),
+
+              // 이미지와 버튼 사이 여백 (자동 조절)
+              Expanded(flex: 1, child: SizedBox()),
+
+              // 시작하기 버튼 (고정)
+              _buildStartButton(),
+
+              const SizedBox(height: 36),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -430,7 +438,6 @@ class _SignupPageState extends State<SignupPage> {
               iconSize: 24,
               color: AppColors.grey700,
             ),
-            // Image.asset('assets/icons/functions/back_icon.png', height: 24, width: 24,),
           ),
           // 제목 (가운데)
           Center(
@@ -461,7 +468,6 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     return Container(
-      // height: 48,
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
@@ -635,14 +641,14 @@ class _SignupPageState extends State<SignupPage> {
   Widget _buildSignUpButton() {
     return SizedBox(
       width: double.infinity,
-      height: 50,
+      height: 48,
       child: ElevatedButton(
         onPressed: (_isFormValid && !_isLoading) ? _handleSignUp : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: _isFormValid ? AppColors.main700 : AppColors.grey400,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
           elevation: 0,
         ),
