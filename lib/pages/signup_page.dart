@@ -208,6 +208,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: _buildCurrentStep(),
       ),
@@ -491,7 +492,7 @@ class _SignupPageState extends State<SignupPage> {
           ),
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
-              color: AppColors.point800,
+              color: getBorderColor(), // 동적으로 색상 결정
               width: 1.5,
             ),
           ),
@@ -536,7 +537,7 @@ class _SignupPageState extends State<SignupPage> {
               ),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: _passwordError != null ? AppColors.point900 : AppColors.point900,
+                  color: getBorderColor(), // 동적으로 색상 결정
                   width: 1.5,
                 ),
               ),
@@ -604,7 +605,7 @@ class _SignupPageState extends State<SignupPage> {
               ),
               focusedBorder: UnderlineInputBorder(
                 borderSide: BorderSide(
-                  color: _passwordConfirmError != null ? AppColors.point900 : AppColors.point900,
+                  color: getBorderColor(), // 동적으로 색상 결정
                   width: 1.5,
                 ),
               ),
