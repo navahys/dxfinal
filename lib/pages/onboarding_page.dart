@@ -3,6 +3,8 @@ import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
 import 'signup_page.dart';
 import 'login_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({super.key});
@@ -38,6 +40,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   // 언어 선택 다이얼로그 표시
+  // 언어 선택 다이얼로그 표시 - 이 부분만 수정
   void _showLanguageSelector() {
     showDialog(
       context: context,
@@ -48,27 +51,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
+          contentPadding: EdgeInsets.all(20), // 패딩 추가
           content: Container(
             width: double.maxFinite,
-            height: 284,
-            padding: EdgeInsets.only(top: 20),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: MainAxisSize.min, // 내용에 맞게 크기 조절
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 상단 헤더 (제목 + X 버튼)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Expanded(
-                      child: Text(
-                        '언어 설정',
-                        style: AppTypography.h5.copyWith(
-                          color: Color(0xFF1B1C1A),
-                        ),
+                    Text(
+                      '언어 설정',
+                      style: AppTypography.h5.copyWith(
+                        color: Color(0xFF1B1C1A),
                       ),
                     ),
-                    SizedBox(width: 16),
                     GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
                       child: Container(
@@ -87,50 +86,48 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 SizedBox(height: 16),
 
                 // 언어 목록
-                Expanded(
-                  child: Column(
-                    children: _languages.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      String language = entry.value;
+                Column(
+                  children: _languages.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    String language = entry.value;
 
-                      return Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                _selectedLanguage = language;
-                              });
-                              Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '$language 선택됨 (데모용)',
-                                    style: AppTypography.b1,
-                                  ),
-                                  duration: const Duration(seconds: 1),
+                    return Column(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              _selectedLanguage = language;
+                            });
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  '$language 선택됨 (데모용)',
+                                  style: AppTypography.b1,
                                 ),
-                              );
-                            },
-                            child: Container(
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              child: Text(
-                                language,
-                                style: AppTypography.b1,
+                                duration: const Duration(seconds: 1),
                               ),
+                            );
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            child: Text(
+                              language,
+                              style: AppTypography.b2,
                             ),
                           ),
-                          // 마지막 항목이 아니면 구분선 추가
-                          if (index < _languages.length - 1)
-                            Divider(
-                              height: 1,
-                              thickness: 1,
-                              color: AppColors.grey200,
-                            ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+                        ),
+                        // 마지막 항목이 아니면 구분선 추가
+                        if (index < _languages.length - 1)
+                          Divider(
+                            height: 1,
+                            thickness: 1,
+                            color: AppColors.grey200,
+                          ),
+                      ],
+                    );
+                  }).toList(),
                 ),
               ],
             ),
@@ -168,7 +165,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           const Icon(
                             Icons.keyboard_arrow_down,
                             color: AppColors.grey300,
-                            size: 24,
+                            size: 20,
                           ),
                         ],
                       ),
@@ -185,14 +182,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   children: [
                     // 로고
                     Container(
-                      child: Image.asset('assets/images/tiiun_logo.png', width: 70.21, height: 35.26,),
+                      child: SvgPicture.asset(
+                        'assets/images/tiiun_logo.svg', width: 70.21, height: 35.26,
+                      ),
                     ),
 
                     const SizedBox(height: 19),
 
                     // 타이틀
                     Container(
-                      child: Image.asset('assets/images/tiiun_buddy_logo.png', width: 148.32, height: 27.98),
+                      child: SvgPicture.asset(
+                          'assets/images/tiiun_buddy_logo.svg', width: 148.32, height: 27.98
+                      ),
                     ),
                   ],
                 ),
@@ -217,7 +218,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                       child: Text(
                         '회원가입',
-                        style: AppTypography.largeBtn.copyWith(
+                        style: AppTypography.s2.copyWith(
                           color: Colors.white,
                         ),
                       ),
@@ -241,7 +242,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                       child: Text(
                         '기존 회원',
-                        style: AppTypography.largeBtn.copyWith(
+                        style: AppTypography.b2.copyWith(
                           color: AppColors.main900,
                         ),
                       ),

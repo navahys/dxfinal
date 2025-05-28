@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -641,7 +642,7 @@ class _SignupPageState extends State<SignupPage> {
             child: IconButton(
               onPressed: _previousStep,
               icon: const Icon(Icons.arrow_back_ios),
-              iconSize: 24,
+              iconSize: 20,
               color: AppColors.grey700,
             ),
           ),
@@ -761,10 +762,10 @@ class _SignupPageState extends State<SignupPage> {
                   _obscurePassword = !_obscurePassword;
                 });
               },
-              child: Image.asset(
+              child: SvgPicture.asset(
                 _obscurePassword
-                    ? 'assets/icons/functions/dontshow_icon.png'
-                    : 'assets/icons/functions/show_icon.png',
+                    ? 'assets/icons/functions/icon_dontshow.svg'
+                    : 'assets/icons/functions/icon_show.svg',
                 width: 24,
                 height: 24,
                 color: AppColors.grey500,
@@ -829,10 +830,10 @@ class _SignupPageState extends State<SignupPage> {
                   _obscurePasswordConfirm = !_obscurePasswordConfirm;
                 });
               },
-              child: Image.asset(
+              child: SvgPicture.asset(
                 _obscurePasswordConfirm
-                    ? 'assets/icons/functions/dontshow_icon.png'
-                    : 'assets/icons/functions/show_icon.png',
+                    ? 'assets/icons/functions/icon_dontshow.svg'
+                    : 'assets/icons/functions/icon_show.svg',
                 width: 24,
                 height: 24,
                 color: AppColors.grey500,

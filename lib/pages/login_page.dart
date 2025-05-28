@@ -4,6 +4,8 @@ import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
 import 'package:tiiun/pages/lgsignin_page.dart';
 import 'signup_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -44,14 +46,14 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // 로고
-                    Image.asset(
-                      'assets/images/tiiun_logo.png',
+                    SvgPicture.asset(
+                      'assets/images/tiiun_logo.svg',
                       width: 70.21,
                       height: 35.26,
                     ),
                     const SizedBox(height: 19),
-                    Image.asset(
-                      'assets/images/tiiun_buddy_logo.png',
+                    SvgPicture.asset(
+                      'assets/images/tiiun_buddy_logo.svg',
                       width: 148.32,
                       height: 27.98,
                     ),
@@ -100,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                             color: AppColors.grey400,
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 12),
                         Icon(
                           Icons.arrow_forward_ios_rounded,
                           color: AppColors.grey300,
@@ -158,8 +160,8 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(width: 12),
             Image.asset(
               iconOrPath,
-              width: 26,
-              height: 26,
+              width: 28,
+              height: 28,
             ),
             Expanded(
               child: Text(
