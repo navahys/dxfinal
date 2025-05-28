@@ -228,7 +228,6 @@ class _SignupPageState extends State<SignupPage> {
 
   // Step 1: 정보 입력 화면
   Widget _buildStep1() {
-<<<<<<< HEAD
     return Expanded(
         child: Container(
           padding: const EdgeInsets.all(24.0),
@@ -365,7 +364,6 @@ class _SignupPageState extends State<SignupPage> {
               ],
             ),
           ),
-=======
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Form(
@@ -505,14 +503,12 @@ class _SignupPageState extends State<SignupPage> {
             // 하단 가입하기 버튼 (고정)
             _buildSignUpButton(),
           ],
->>>>>>> jiyun
         ),
       );
   }
 
   // Step 2: 완료 화면
   Widget _buildStep2() {
-<<<<<<< HEAD
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -616,7 +612,6 @@ class _SignupPageState extends State<SignupPage> {
 
               const SizedBox(height: 36),
             ],
->>>>>>> jiyun
           ),
           // 제목 (가운데)
           Center(
@@ -679,10 +674,7 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     return Container(
-<<<<<<< HEAD
       // height: 48,
-=======
->>>>>>> jiyun
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
