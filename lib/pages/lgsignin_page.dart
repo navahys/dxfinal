@@ -148,42 +148,13 @@ class _LGSigninPageState extends State<LGSigninPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 상단 헤더 (가운데 정렬)
-                Container(
-                  height: 56,
-                  child: Stack(
-                    children: [
-                      // 뒤로가기 버튼 (왼쪽)
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        child: IconButton(
-                          onPressed: () => Navigator.pop(context),
-                          icon: const Icon(Icons.arrow_back_ios),
-                          iconSize: 24,
-                          color: AppColors.grey700,
-                        ),
-                      ),
-                      // 제목 (가운데)
-                      Center(
-                        child: Text(
-                          'LG 계정 로그인',
-                          style: AppTypography.b2.copyWith(
-                            color: AppColors.grey900,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // 상단 헤더 (고정)
+                _buildHeader(),
 
-                const SizedBox(height: 220),
-
-                // 입력 필드들
+                // 입력 필드들 (자동 확장)
                 Expanded(
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // ID 라벨
@@ -243,12 +214,43 @@ class _LGSigninPageState extends State<LGSigninPage> {
                   ),
                 ),
 
-                // 로그인 버튼
+                // 로그인 버튼 (하단 고정)
                 _buildSignInButton(),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      height: 56,
+      child: Stack(
+        children: [
+          // 뒤로가기 버튼 (왼쪽)
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: IconButton(
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.arrow_back_ios),
+              iconSize: 24,
+              color: AppColors.grey700,
+            ),
+          ),
+          // 제목 (가운데)
+          Center(
+            child: Text(
+              'LG 계정 로그인',
+              style: AppTypography.b2.copyWith(
+                color: AppColors.grey900,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -303,7 +305,11 @@ class _LGSigninPageState extends State<LGSigninPage> {
   Widget _buildPasswordField() {
     Color getBorderColor() {
       if (_passwordError != null) return AppColors.point800;
+<<<<<<< HEAD
       if (_isPasswordValid) return AppColors.main700;  // 또는 AppColors.point900
+=======
+      if (_isPasswordValid) return AppColors.main700;
+>>>>>>> jiyun
       return AppColors.grey300;
     }
     return Container(
@@ -369,14 +375,14 @@ class _LGSigninPageState extends State<LGSigninPage> {
   Widget _buildSignInButton() {
     return SizedBox(
       width: double.infinity,
-      height: 50,
+      height: 48,
       child: ElevatedButton(
         onPressed: (_isFormValid && !_isLoading) ? _handleSignIn : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: _isFormValid ? AppColors.main700 : AppColors.grey400,
+          backgroundColor: _isFormValid ? AppColors.main700 : AppColors.grey200,
           foregroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
           ),
           elevation: 0,
         ),
@@ -385,7 +391,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
             : Text(
           '로그인',
           style: AppTypography.largeBtn.copyWith(
-            color: _isFormValid ? Colors.white : AppColors.grey500,
+            color: _isFormValid ? Colors.white : AppColors.grey400,
           ),
         ),
       ),

@@ -34,80 +34,86 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: _buildLoginScreen(),
-      ),
-    );
-  }
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            children: [
+              // 중앙 로고 영역 (자동 확장)
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // 로고
+                    Image.asset(
+                      'assets/images/tiiun_logo.png',
+                      width: 70.21,
+                      height: 35.26,
+                    ),
+                    const SizedBox(height: 19),
+                    Image.asset(
+                      'assets/images/tiiun_buddy_logo.png',
+                      width: 148.32,
+                      height: 27.98,
+                    ),
+                  ],
+                ),
+              ),
 
-  // 로그인 화면
-  Widget _buildLoginScreen() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        children: [
-          // 중앙 로고 영역
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 210),
-
-                Image.asset('assets/images/tiiun_logo.png', width: 70.21, height: 35.26),
-                Container(height: 19),
-                Image.asset('assets/images/tiiun_buddy_logo.png', width: 148.32, height: 27.98),
-
-                const SizedBox(height: 240),
-
-                // 소셜 로그인 버튼들
-                _buildSocialLoginButton(
-                  'LG 계정 로그인',
-                  'assets/images/lg_logo.png',
-                  Color(0xFF97282F),
-                  onTap: () {
-                    // LG 로그인 폼으로 이동
-                    Navigator.push(
+              // 소셜 로그인 버튼들 (하단 고정)
+              Column(
+                children: [
+                  _buildSocialLoginButton(
+                    'LG 계정 로그인',
+                    'assets/images/lg_logo.png',
+                    Color(0xFF97282F),
+                    onTap: () {
+                      Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => LGSigninPage()),
-                    );
-                  }, // 로그인 성공 시 홈으로
-                ),
-                const SizedBox(height: 10),
-                _buildSocialLoginButton(
-                  'Google 계정으로 로그인',
-                  'assets/images/google_logo.png',
-                  Color(0xFF477BDF),
-                ),
-                const SizedBox(height: 10),
-                _buildSocialLoginButton(
-                  'Apple 계정으로 로그인',
-                  'assets/images/apple_logo.png',
-                  Colors.black,
-                ),
-              ],
-            ),
-          ),
-
-          Container(height: 24),
-          // 다른 계정으로 로그인
-          GestureDetector(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '다른 계정으로 로그인',
-                  style: AppTypography.mediumBtn.copyWith(
-                    color: AppColors.grey400,
+                      );
+                    },
                   ),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: AppColors.grey300,
-                  size: 10,
-                ),
-              ],
-            ),
-          )
-        ],
+                  const SizedBox(height: 10),
+                  _buildSocialLoginButton(
+                    'Google 계정으로 로그인',
+                    'assets/images/google_logo.png',
+                    Color(0xFF477BDF),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildSocialLoginButton(
+                    'Apple 계정으로 로그인',
+                    'assets/images/apple_logo.png',
+                    Colors.black,
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // 다른 계정으로 로그인
+                  GestureDetector(
+                    // onTap: _navigateToSignup,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          '다른 계정으로 로그인',
+                          style: AppTypography.mediumBtn.copyWith(
+                            color: AppColors.grey400,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: AppColors.grey300,
+                          size: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

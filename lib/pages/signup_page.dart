@@ -228,6 +228,7 @@ class _SignupPageState extends State<SignupPage> {
 
   // Step 1: 정보 입력 화면
   Widget _buildStep1() {
+<<<<<<< HEAD
     return Expanded(
         child: Container(
           padding: const EdgeInsets.all(24.0),
@@ -364,12 +365,154 @@ class _SignupPageState extends State<SignupPage> {
               ],
             ),
           ),
+=======
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 상단 헤더 (고정)
+            _buildHeaderWithTitle(),
+
+            // 입력 필드들 (자동 확장)
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // 중앙 정렬을 위한 여백
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+
+                    // 이메일 라벨
+                    Text(
+                      '이메일',
+                      style: AppTypography.b2.copyWith(
+                        color: AppColors.grey800,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+
+                    // 이메일 입력 필드
+                    _buildTextFormField(
+                      controller: _emailController,
+                      hintText: '이메일 입력',
+                      keyboardType: TextInputType.emailAddress,
+                      hasError: _emailError != null,
+                      isValid: _isEmailValid,
+                    ),
+
+                    // 이메일 에러 메시지
+                    if (_emailError != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        _emailError!,
+                        style: AppTypography.c1.copyWith(
+                          color: AppColors.point900,
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 28),
+
+                    // 비밀번호 라벨
+                    Text(
+                      '비밀번호',
+                      style: AppTypography.b2.copyWith(
+                        color: AppColors.grey900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+
+                    // 비밀번호 입력 필드
+                    _buildPasswordField(),
+
+                    // 비밀번호 에러 메시지
+                    if (_passwordError != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        _passwordError!,
+                        style: AppTypography.c1.copyWith(
+                          color: AppColors.point900,
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 24),
+
+                    // 비밀번호 확인 라벨
+                    Text(
+                      '비밀번호 확인',
+                      style: AppTypography.b2.copyWith(
+                        color: AppColors.grey900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+
+                    // 비밀번호 확인 입력 필드
+                    _buildPasswordConfirmField(),
+
+                    // 비밀번호 확인 에러 메시지
+                    if (_passwordConfirmError != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        _passwordConfirmError!,
+                        style: AppTypography.c1.copyWith(
+                          color: AppColors.point900,
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: 24),
+
+                    // 닉네임 라벨
+                    Text(
+                      '닉네임',
+                      style: AppTypography.b2.copyWith(
+                        color: AppColors.grey900,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+
+                    // 닉네임 입력 필드
+                    _buildTextFormField(
+                      controller: _nicknameController,
+                      hintText: '닉네임 입력 (한글, 영문, 숫자)',
+                      hasError: _nicknameError != null,
+                      isValid: _isNicknameValid,
+                    ),
+
+                    // 닉네임 에러 메시지
+                    if (_nicknameError != null) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        _nicknameError!,
+                        style: AppTypography.c1.copyWith(
+                          color: AppColors.point900,
+                        ),
+                      ),
+                    ],
+
+                    // 하단 여백
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.1),
+                  ],
+                ),
+              ),
+            ),
+
+            // 하단 가입하기 버튼 (고정)
+            _buildSignUpButton(),
+          ],
+>>>>>>> jiyun
         ),
       );
   }
 
   // Step 2: 완료 화면
   Widget _buildStep2() {
+<<<<<<< HEAD
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -431,6 +574,81 @@ class _SignupPageState extends State<SignupPage> {
               color: AppColors.grey700,
             ),
             // Image.asset('assets/icons/functions/back_icon.png', height: 24, width: 24,),
+=======
+    return Stack(
+      children: [
+        // 환영 문구 (절대 위치로 고정)
+        Positioned(
+          top: 80,
+          left: 20,
+          child: Text(
+            "환영해요!\n틔운버디와 추억을 만들어요",
+            style: AppTypography.h4.copyWith(
+              color: AppColors.grey900,
+              height: 1.5,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ),
+
+        // 나머지 콘텐츠 (중앙 이미지와 하단 버튼)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            children: [
+              // 상단 여백 (자동 조절)
+              Expanded(flex: 1, child: SizedBox()),
+
+              // 환영 이미지 (고정)
+              Center(
+                child: Image.asset(
+                  'assets/images/illust_welcome.png',
+                  width: 200,
+                  height: 200,
+                ),
+              ),
+
+              // 이미지와 버튼 사이 여백 (자동 조절)
+              Expanded(flex: 1, child: SizedBox()),
+
+              // 시작하기 버튼 (고정)
+              _buildStartButton(),
+
+              const SizedBox(height: 36),
+            ],
+>>>>>>> jiyun
+          ),
+          // 제목 (가운데)
+          Center(
+            child: Text(
+              '회원가입',
+              style: AppTypography.b2.copyWith(
+                color: AppColors.grey900,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // 헤더 + 타이틀
+  Widget _buildHeaderWithTitle() {
+    return Container(
+      height: 56,
+      child: Stack(
+        children: [
+          // 뒤로가기 버튼 (왼쪽)
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: IconButton(
+              onPressed: _previousStep,
+              icon: const Icon(Icons.arrow_back_ios),
+              iconSize: 24,
+              color: AppColors.grey700,
+            ),
           ),
           // 제목 (가운데)
           Center(
@@ -461,7 +679,10 @@ class _SignupPageState extends State<SignupPage> {
     }
 
     return Container(
+<<<<<<< HEAD
       // height: 48,
+=======
+>>>>>>> jiyun
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
@@ -635,7 +856,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget _buildSignUpButton() {
     return SizedBox(
       width: double.infinity,
-      height: 50,
+      height: 48,
       child: ElevatedButton(
         onPressed: (_isFormValid && !_isLoading) ? _handleSignUp : null,
         style: ElevatedButton.styleFrom(
