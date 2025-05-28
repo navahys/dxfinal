@@ -7,7 +7,7 @@ class AppTypography {
   static const TextStyle h1 = TextStyle(
     fontSize: 40,
     fontWeight: FontWeight.w600, // Semi Bold
-    height: 1.0,
+    height: 58/40,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -15,7 +15,7 @@ class AppTypography {
   static const TextStyle h2 = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.w600,
-    height: 1.0,
+    height: 48/32,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -23,7 +23,7 @@ class AppTypography {
   static const TextStyle h3 = TextStyle(
     fontSize: 28,
     fontWeight: FontWeight.w600,
-    height: 1.0,
+    height: 38/28,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -31,7 +31,7 @@ class AppTypography {
   static const TextStyle h4 = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w600,
-    height: 1.0,
+    height: 34/24,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -39,7 +39,7 @@ class AppTypography {
   static const TextStyle h5 = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w600,
-    height: 1.0,
+    height: 28/20,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -65,7 +65,7 @@ class AppTypography {
   static const TextStyle b1 = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w400, // Regular = Normal
-    height: 1.0,
+    height: 24/16,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -73,7 +73,7 @@ class AppTypography {
   static const TextStyle b2 = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w500, // Medium
-    height: 1.0,
+    height: 24/16,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -81,7 +81,7 @@ class AppTypography {
   static const TextStyle b3 = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    height: 1.0,
+    height: 20/14,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -89,7 +89,7 @@ class AppTypography {
   static const TextStyle b4 = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
-    height: 1.0,
+    height: 20/14,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -105,7 +105,7 @@ class AppTypography {
   static const TextStyle c2 = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w500,
-    height: 1.0,
+    height: 16/12,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -113,7 +113,7 @@ class AppTypography {
   static const TextStyle c3 = TextStyle(
     fontSize: 10,
     fontWeight: FontWeight.w500,
-    height: 1.0,
+    height: 14/10,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -122,7 +122,7 @@ class AppTypography {
   static const TextStyle label = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w500,
-    height: 1.0,
+    height: 16/12,
     letterSpacing: 0,
     fontFamily: fontFamily,
     
@@ -132,7 +132,7 @@ class AppTypography {
   static const TextStyle giantBtn = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w600,
-    height: 1.0,
+    height: 24/18,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -140,7 +140,7 @@ class AppTypography {
   static const TextStyle largeBtn = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    height: 1.35,
+    height: 20/16,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -148,7 +148,7 @@ class AppTypography {
   static const TextStyle mediumBtn = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w600,
-    height: 1.0,
+    height: 16/14,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -156,7 +156,7 @@ class AppTypography {
   static const TextStyle smallBtn = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w600,
-    height: 1.0,
+    height: 16/12,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
@@ -164,7 +164,7 @@ class AppTypography {
   static const TextStyle tinyBtn = TextStyle(
     fontSize: 10,
     fontWeight: FontWeight.w600,
-    height: 1.0,
+    height: 12/10,
     letterSpacing: 0,
     fontFamily: fontFamily,
   );
