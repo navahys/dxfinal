@@ -341,6 +341,9 @@ class _HomePageState extends State<HomePage> {
 
                     // 하단 여백 (네비게이션 바와 겹치지 않게)
                     const SizedBox(height: 100),
+
+                    SizedBox(height: 12,),
+
                   ],
                 ),
               ),
