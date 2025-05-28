@@ -170,3 +170,13 @@ class AppTypography {
   );
 
 }
+
+// Extension for easy color application
+extension AppTypographyExtension on TextStyle {
+  TextStyle withColor(Color color) {
+    return copyWith(
+      color: color,
+      letterSpacing: letterSpacing ?? 0, // letterSpacing 보장
+    );
+  }
+}

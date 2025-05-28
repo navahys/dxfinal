@@ -64,9 +64,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   children: [
                     Text(
                       '언어 설정',
-                      style: AppTypography.h5.copyWith(
-                        color: Color(0xFF1B1C1A),
-                      ),
+                      style: AppTypography.h5.withColor(Color(0xFF1B1C1A),),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.of(context).pop(),
@@ -158,9 +156,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         children: [
                           Text(
                             _selectedLanguage,
-                            style: AppTypography.b4.copyWith(
-                              color: AppColors.grey400,
-                            ),
+                            style: AppTypography.b4.withColor(AppColors.grey400,),
                           ),
                           const Icon(
                             Icons.keyboard_arrow_down,
@@ -218,9 +214,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                       child: Text(
                         '회원가입',
-                        style: AppTypography.s2.copyWith(
-                          color: Colors.white,
-                        ),
+                        style: AppTypography.s2.withColor(Colors.white,),
                       ),
                     ),
                   ),
@@ -242,9 +236,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                       child: Text(
                         '기존 회원',
-                        style: AppTypography.b2.copyWith(
-                          color: AppColors.main900,
-                        ),
+                        style: AppTypography.b2.withColor(AppColors.main900,),
                       ),
                     ),
                   ),

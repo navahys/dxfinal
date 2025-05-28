@@ -19,8 +19,7 @@ class MyPage extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 'My',
-                style: AppTypography.h1.copyWith(color: AppColors.grey900),
-              ),
+                style: AppTypography.h1.withColor(AppColors.grey900),),
               const SizedBox(height: 32),
 
               // 프로필 섹션
@@ -60,12 +59,12 @@ class MyPage extends StatelessWidget {
                         children: [
                           Text(
                             '사용자님',
-                            style: AppTypography.b1.copyWith(color: AppColors.grey900),
+                            style: AppTypography.b1.withColor(AppColors.grey900),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             'Tiiun과 함께 성장하고 있어요',
-                            style: AppTypography.b4.copyWith(color: AppColors.grey600),
+                            style: AppTypography.b4.withColor(AppColors.grey600),
                           ),
                         ],
                       ),
@@ -156,7 +155,7 @@ class MyPage extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: AppTypography.b2.copyWith(color: AppColors.grey900),
+                    style: AppTypography.b2.withColor(AppColors.grey900),
                   ),
                 ),
                 Icon(

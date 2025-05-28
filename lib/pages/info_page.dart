@@ -19,7 +19,7 @@ class InfoPage extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 '정보',
-                style: AppTypography.h1.copyWith(color: AppColors.grey900),
+                style: AppTypography.h1.withColor(AppColors.grey900),
               ),
               const SizedBox(height: 32),
               Expanded(
@@ -97,12 +97,12 @@ class InfoPage extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: AppTypography.b1.copyWith(color: AppColors.grey900),
+                  style: AppTypography.b1.withColor(AppColors.grey900),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: AppTypography.b4.copyWith(color: AppColors.grey600),
+                  style: AppTypography.b4.withColor(AppColors.grey600),
                 ),
               ],
             ),

@@ -17,7 +17,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _textController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   int _selectedIndex = 0;
+  bool _showLeftGradient = false;
+  bool _showRightGradient = false;
 
   void _goToChatScreen() {
     if (_textController.text.trim().isNotEmpty) {
@@ -42,9 +45,36 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll); // 리스너 추가
+
+    // 초기 그라데이션 상태 설정
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(Duration(milliseconds: 100), () {
+        if (_scrollController.hasClients && mounted) {
+          _onScroll(); // 직접 _onScroll 호출
+        }
+      });
+    });
+
+  }
+
+  @override
   void dispose() {
     _textController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+
+    setState(() {
+      _showLeftGradient = _scrollController.offset > 0;
+      _showRightGradient = _scrollController.offset <
+          _scrollController.position.maxScrollExtent;
+    });
   }
 
   // 홈 탭 내용 (기존 HomePage 내용)
@@ -91,9 +121,8 @@ class _HomePageState extends State<HomePage> {
 
                     // 검색창
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 24),
                       padding: const EdgeInsets.all(1.5),
-                      width: double.maxFinite,
+                      width: 312,
                       height: 48,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
@@ -129,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                                 onSubmitted: (value) => _goToChatScreen(),
                                 decoration: InputDecoration(
                                   hintText: '무엇이든 이야기하세요',
-                                  hintStyle: AppTypography.b4.copyWith(color: AppColors.grey400),
+                                  hintStyle: AppTypography.b4.withColor(AppColors.grey400),
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.zero,
                                 ),
@@ -152,13 +181,15 @@ class _HomePageState extends State<HomePage> {
 
                     // 퀵 액션 버튼들 (가로 스크롤)
                     SizedBox(
+                      width: double.infinity,
                       height: 32,
                       child: Stack(
                         children: [
                           // 스크롤 가능한 버튼 리스트
                           ListView(
+                            controller: _scrollController,
                             scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.only(left: 24),
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
                             children: [
                               _buildQuickActionWithIcon('이전 대화', 'assets/icons/functions/icon_dialog.svg'),
                               const SizedBox(width: 8),
@@ -168,54 +199,62 @@ class _HomePageState extends State<HomePage> {
                               const SizedBox(width: 8),
                               _buildQuickActionText('위로가 필요할 때'),
                               const SizedBox(width: 8),
-                              _buildQuickActionText('시시콜콜'),
+                              _buildQuickActionText('시시콜콜콜콜콜'),
                               const SizedBox(width: 8),
                               _buildQuickActionText('끝말 잇기'),
                               const SizedBox(width: 8),
                               _buildQuickActionText('화가 나요'),
-                              const SizedBox(width: 24), // 마지막 여백
+                              const SizedBox(width: 8),
+                              _buildQuickActionText('화가 나요'),
+                              const SizedBox(width: 8),
+                              _buildQuickActionText('화가 나요'),
+                              const SizedBox(width: 8),
+                              _buildQuickActionText('화가 나요'),
+                              // const SizedBox(width: 24), // 마지막 여백
                             ],
                           ),
-                          // 왼쪽 그라데이션
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Container(
-                              width: 24,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: [
-                                    const Color(0xFFF3F5F2),
-                                    const Color(0xFFF3F5F2).withOpacity(0.0),
-                                  ],
-                                  stops: [0.1, 1.0],
+                          // 왼쪽 그라데이션 (조건부 표시)
+                          if (_showLeftGradient)
+                            Positioned(
+                              left: 0,
+                              top: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 24,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      const Color(0xFFF3F5F2),
+                                      const Color(0xFFF3F5F2).withOpacity(0.0),
+                                    ],
+                                    stops: [0.1, 1.0],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          // 오른쪽 그라데이션
-                          Positioned(
-                            right: 0,
-                            top: 0,
-                            bottom: 0,
-                            child: Container(
-                              width: 24,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
-                                  colors: [
-                                    const Color(0xFFF3F5F2).withOpacity(0.0),
-                                    const Color(0xFFF3F5F2),
-                                  ],
-                                  stops: [0.9, 1.0],
+                          // 오른쪽 그라데이션 (조건부 표시)
+                          if (_showRightGradient)
+                            Positioned(
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 24,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      const Color(0xFFF3F5F2).withOpacity(0.0),
+                                      const Color(0xFFF3F5F2),
+                                    ],
+                                    stops: [0.9, 1.0],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -224,7 +263,7 @@ class _HomePageState extends State<HomePage> {
 
                     // 틔운 상태 창
                     Container(
-                      // width: 320,
+                      width: 320,
                       height: 56,
                       margin: const EdgeInsets.symmetric(horizontal: 20),
                       padding: const EdgeInsets.only(left: 12, right: 12, top: 16, bottom: 16),
@@ -245,9 +284,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const SizedBox(width: 2),
                           Text('적정 온도',
-                            style: AppTypography.b3.copyWith(
-                              color: AppColors.grey700,
-                            ),
+                            style: AppTypography.b3.withColor(AppColors.grey700,),
                           ),
 
                           const SizedBox(width: 12,),
@@ -269,9 +306,7 @@ class _HomePageState extends State<HomePage> {
                           SizedBox(width: 2,),
 
                           Text('조명 밝기 낮음',
-                            style: AppTypography.b3.copyWith(
-                              color: AppColors.grey700,
-                            ),
+                            style: AppTypography.b3.withColor(AppColors.grey700,),
                           ),
 
                           const Spacer(),
@@ -293,59 +328,59 @@ class _HomePageState extends State<HomePage> {
 
           // 겨울철 식물 관리 팁 섹션 (스크롤 가능한 영역)
           SliverToBoxAdapter(
-            child: Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
+            child: Center(
+              child: Container(
+                width: 360,
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(16),
+                    topRight: Radius.circular(16),
+                  ),
                 ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '겨울철 식물 관리 팁',
-                      style: AppTypography.s1.copyWith(
-                        color: AppColors.grey900,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 24, bottom: 36),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '겨울철 식물 관리 팁 \u{26C4}',
+                        style: AppTypography.s1.withColor(AppColors.grey900,),
                       ),
-                    ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
 
-                    // 2열 그리드로 식물 관리 팁 카드들 배치
-                    GridView.count(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.75, // 세로가 더 긴 비율
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        _buildPlantTipCard(
-                          '겨울철 물주기, 깍지벌레 관리 팁',
-                          'assets/images/plant_tip1.svg',
-                        ),
-                        _buildPlantTipCard(
-                          '겨울 걱정 NO! 겨울철 식물 이사 고민 줄여요',
-                          'assets/images/plant2.svg',
-                        ),
-                        _buildPlantTipCard(
-                          '실내 공기 정화 식물로 겨울철 건강 지키기',
-                          'assets/images/plant3.svg',
-                        ),
-                        _buildPlantTipCard(
-                          '토분이 관리하기 쉽다고? 누가!',
-                          'assets/images/plant4.svg',
-                        ),
-                      ],
-                    ),
+                      // 2열 그리드로 식물 관리 팁 카드들 배치
+                      // 모든 GridView/Row/Column 대신 이걸로 교체
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          _buildPlantTipCard(
+                              '겨울철 물주기, 깍지벌레 관리 팁',
+                              'assets/images/plant_tip1.png'
+                          ),
+                          _buildPlantTipCard(
+                              '겨울 걱정 NO! 겨울철\n식물 이사 고민 줄여요',
+                              'assets/images/plant_tip2.png'
+                          ),
+                          _buildPlantTipCard(
+                              '실내 공기 정화 식물로\n겨울철 건강 지키기',
+                              'assets/images/plant_tip3.png'
+                          ),
+                          _buildPlantTipCard(
+                              '토분이 관리하기 쉽다고? 누가!',
+                              'assets/images/plant_tip4.png'
+                          ),
+                        ],
+                      ),
 
-                    // 하단 여백 (네비게이션 바와 겹치지 않게)
-                    const SizedBox(height: 100),
-                  ],
+                      // 하단 여백 (네비게이션 바와 겹치지 않게)
+                      const SizedBox(height: 36),
+
+
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -379,9 +414,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(width: 4),
             Text(
               text,
-              style: AppTypography.b4.copyWith(
-                color: AppColors.grey700,
-              ),
+              style: AppTypography.b4.withColor(AppColors.grey700,),
             ),
           ],
         ),
@@ -391,76 +424,44 @@ class _HomePageState extends State<HomePage> {
 
   // 2열 그리드용 식물 관리 팁 카드 위젯 (세로형)
   Widget _buildPlantTipCard(String title, String imagePath) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
+    return SizedBox(
+      width: 156,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 이미지
-          Expanded(
-            flex: 3,
-            child: Container(
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Image.asset(
+              imagePath,
+              // width: 156,
               width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppColors.grey100,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-              ),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: SvgPicture.asset(
-                    imagePath,
-                    fit: BoxFit.contain,
-                    placeholderBuilder: (context) => Container(
-                      color: AppColors.grey100,
-                      child: const Icon(
-                        Icons.eco,
-                        size: 48,
-                        color: Colors.green,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              // height: 156,
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.high,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  // width: 156,
+                  width: double.infinity,
+                  // height: 156,
+                  color: AppColors.grey100,
+                  child: const Icon(Icons.eco, size: 48, color: Colors.green),
+                );
+              },
             ),
           ),
-          // 텍스트 내용
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(
-                title,
-                style: AppTypography.b3.copyWith(
-                  color: AppColors.grey900,
-                  fontWeight: FontWeight.w600,
-                ),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
+          const SizedBox(height: 8),
+          Text( // Container 제거하고 직접 Text 사용
+            title,
+            style: AppTypography.b2.withColor(AppColors.grey800,),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),
     );
   }
+
+
 
   // 각 탭 내용 선택
   Widget _buildContent() {
@@ -494,9 +495,7 @@ class _HomePageState extends State<HomePage> {
         child: Center(
           child: Text(
             text,
-            style: AppTypography.b4.copyWith(
-              color: AppColors.grey700,
-            ),
+            style: AppTypography.b4.withColor(AppColors.grey700,),
           ),
         ),
       ),
@@ -596,9 +595,8 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 2),
             Text(
               label,
-              style: AppTypography.c2.copyWith(
-                color: isSelected ? AppColors.grey900 : AppColors.grey300,
-              ),
+              style: AppTypography.c2.withColor(
+                isSelected ? AppColors.grey900 : AppColors.grey300,),
             ),
           ],
         ),
