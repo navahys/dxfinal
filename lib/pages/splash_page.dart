@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -56,14 +58,14 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/images/tiiun_logo.png',
+              SvgPicture.asset(
+                'assets/images/tiiun_logo.svg',
                 width: 70.21,
                 height: 35.26,
               ), // 로고
               const SizedBox(height: 18.74),
-              Image.asset(
-                'assets/images/tiiun_buddy_logo.png',
+              SvgPicture.asset(
+                'assets/images/tiiun_buddy_logo.svg',
                 width: 149,
                 height: 29,
               ),

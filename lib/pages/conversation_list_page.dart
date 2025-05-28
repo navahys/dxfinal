@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/firebase_service.dart';
 import 'chatting_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ConversationListPage extends StatefulWidget {
   const ConversationListPage({super.key});

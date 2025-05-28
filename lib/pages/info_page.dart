@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class InfoPage extends StatelessWidget {
   const InfoPage({super.key});

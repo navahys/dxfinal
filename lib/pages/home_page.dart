@@ -6,6 +6,7 @@ import 'package:tiiun/pages/my_page.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
 import 'dart:ui';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -68,8 +69,8 @@ class _HomePageState extends State<HomePage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Image.asset(
-                            'assets/icons/functions/notification_off_icon.png',
+                          SvgPicture.asset(
+                            'assets/icons/functions/notification_off.svg',
                             width: 24,
                             height: 24,
                           ),
@@ -80,8 +81,8 @@ class _HomePageState extends State<HomePage> {
 
                     // 로고
                     Container(
-                      child: Image.asset(
-                        'assets/images/tiiun_logo.png',
+                      child: SvgPicture.asset(
+                        'assets/images/tiiun_logo.svg',
                         width: 80,
                         height: 40,
                       ),
@@ -136,8 +137,8 @@ class _HomePageState extends State<HomePage> {
                             ),
                             GestureDetector(
                               onTap: _goToChatScreen,
-                              child: Image.asset(
-                                'assets/icons/functions/send_icon.png',
+                              child: SvgPicture.asset(
+                                'assets/icons/functions/Paper_Plane.svg',
                                 width: 24,
                                 height: 24,
                               ),
@@ -159,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                             scrollDirection: Axis.horizontal,
                             padding: const EdgeInsets.only(left: 24),
                             children: [
-                              _buildQuickActionWithIcon('이전 대화', 'assets/icons/functions/dialog_icon.png'),
+                              _buildQuickActionWithIcon('이전 대화', 'assets/icons/functions/icon_dialog.svg'),
                               const SizedBox(width: 8),
                               _buildQuickActionText('자랑거리'),
                               const SizedBox(width: 8),
@@ -237,11 +238,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: Row(
                         children: [
-                          Image.asset(
-                            'assets/icons/functions/temperature_off_icon.png',
+                          SvgPicture.asset(
+                            'assets/icons/functions/temperature_off.svg',
                             width: 24,
                             height: 24,
-                            filterQuality: FilterQuality.high
                           ),
                           const SizedBox(width: 2),
                           Text('적정 온도',
@@ -260,7 +260,11 @@ class _HomePageState extends State<HomePage> {
 
                           const SizedBox(width: 12,),
                           
-                          Image.asset('assets/icons/functions/light_on_icon3.png', width: 24, height: 24,),
+                          SvgPicture.asset(
+                            'assets/icons/functions/light_on.svg',
+                            width: 24,
+                            height: 24,
+                          ),
 
                           SizedBox(width: 2,),
 
@@ -272,7 +276,11 @@ class _HomePageState extends State<HomePage> {
 
                           const Spacer(),
 
-                          Image.asset('assets/icons/functions/more_icon.png', width: 24, height: 24,),
+                          SvgPicture.asset(
+                            'assets/icons/functions/more.svg',
+                            width: 24,
+                            height: 24,
+                          ),
                         ],
                       ),
                     ),
@@ -290,49 +298,44 @@ class _HomePageState extends State<HomePage> {
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
                 ),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '겨울철 식물 관리 팁',
-                      style: AppTypography.h2.copyWith(
+                      style: AppTypography.s1.copyWith(
                         color: AppColors.grey900,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
                     // 식물 관리 팁 카드들
                     _buildPlantTipCard(
-                      '겨울철 물주기, 적정관리',
-                      '겨울 식어 NOX 겨울철 식물 이 고기 좋아요',
+                      '겨울철 물주기, 깍지벌레 관리 팁',
                       'assets/images/plant1.jpg',
                     ),
                     const SizedBox(height: 16),
 
                     _buildPlantTipCard(
-                      '실내 공기 정화 식물로',
-                      '둘번이 관리하기 실컷 미구 겨울철 실내 공기 정화 목적으로',
+                      '겨울 걱정 No! 겨울철 식물 이사 고민 줄여요',
                       'assets/images/plant2.jpg',
                     ),
                     const SizedBox(height: 16),
 
                     _buildPlantTipCard(
-                      '겨울철 물주기 간격 주의하기',
-                      '겨울에 간격 차기',
+                      '실내 공기 정화 식물로 겨울철 건강 지키기',
                       'assets/images/plant3.jpg',
                     ),
                     const SizedBox(height: 16),
 
                     _buildPlantTipCard(
-                      '실내공기 정화 식물요',
-                      '돌봄이 관리하기 실컷나',
+                      '토분이 관리하기 쉽다고? 누가!',
                       'assets/images/plant4.jpg',
                     ),
 
@@ -364,7 +367,7 @@ class _HomePageState extends State<HomePage> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
+            SvgPicture.asset(
               iconPath,
               width: 16,
               height: 16,
@@ -383,7 +386,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   // 식물 관리 팁 카드 위젯
-  Widget _buildPlantTipCard(String title, String description, String imagePath) {
+  Widget _buildPlantTipCard(String title, String imagePath) {
     return Container(
       height: 120,
       decoration: BoxDecoration(
@@ -434,14 +437,6 @@ class _HomePageState extends State<HomePage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    description,
-                    style: AppTypography.b4.copyWith(
-                      color: AppColors.grey600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
                 ],
               ),
             ),
@@ -528,26 +523,26 @@ class _HomePageState extends State<HomePage> {
                     _buildNavItem(
                       index: 0,
                       label: '홈',
-                      activeIcon: 'assets/icons/navbar/home_icon.png',
-                      inactiveIcon: 'assets/icons/navbar/home_icon.png',
+                      activeIcon: 'assets/icons/navbar/home.svg',
+                      inactiveIcon: 'assets/icons/navbar/home.svg',
                     ),
                     _buildNavItem(
                       index: 1,
                       label: '버디',
-                      activeIcon: 'assets/icons/navbar/buddy_icon.png',
-                      inactiveIcon: 'assets/icons/navbar/buddy_icon.png',
+                      activeIcon: 'assets/icons/navbar/leaves.svg',
+                      inactiveIcon: 'assets/icons/navbar/leaves.svg',
                     ),
                     _buildNavItem(
                       index: 2,
                       label: '정보',
-                      activeIcon: 'assets/icons/navbar/info_icon.png',
-                      inactiveIcon: 'assets/icons/navbar/info_icon.png',
+                      activeIcon: 'assets/icons/navbar/information.svg',
+                      inactiveIcon: 'assets/icons/navbar/information.svg',
                     ),
                     _buildNavItem(
                       index: 3,
                       label: 'My',
-                      activeIcon: 'assets/icons/navbar/mypage_icon.png',
-                      inactiveIcon: 'assets/icons/navbar/mypage_icon.png',
+                      activeIcon: 'assets/icons/navbar/my.svg',
+                      inactiveIcon: 'assets/icons/navbar/my.svg',
                     ),
                   ],
                 ),
@@ -573,11 +568,14 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset(
+            SvgPicture.asset(
               isSelected ? activeIcon : inactiveIcon,
               width: 24,
               height: 24,
-              color: isSelected ? AppColors.grey900 : AppColors.grey300,
+              colorFilter: ColorFilter.mode(
+                isSelected ? AppColors.grey900 : AppColors.grey300,
+                BlendMode.srcIn,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
