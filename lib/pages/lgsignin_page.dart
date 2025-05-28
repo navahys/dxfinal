@@ -307,6 +307,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
   Widget _buildPasswordField() {
     Color getBorderColor() {
       if (_passwordError != null) return AppColors.point800;
+      if (_isPasswordValid) return AppColors.main700;  // 또는 AppColors.point900
       if (_isPasswordValid) return AppColors.main700;
       return AppColors.grey300;
     }
