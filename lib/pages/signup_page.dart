@@ -384,13 +384,20 @@ class _SignupPageState extends State<SignupPage> {
                   "환영해요!\n틔운버디와 추억을 만들어요",
                   style: AppTypography.h4.copyWith(
                     color: AppColors.grey900,
+                    height: 1.5,
                   ),
                   textAlign: TextAlign.left,
                 ),
 
                 const SizedBox(height: 149),
 
-                Image.asset('assets/images/illust_welcome.png', width: 200, height: 200,),
+                Center(
+                  child: Image.asset(
+                    'assets/images/illust_welcome.png',
+                    width: 200,
+                    height: 200,
+                  ),
+                ),
 
                 const SizedBox(height: 219),
               ],
@@ -400,7 +407,7 @@ class _SignupPageState extends State<SignupPage> {
           // 시작하기 버튼
           _buildStartButton(),
 
-          SizedBox(height: 36,)
+          const SizedBox(height: 36),
         ],
       ),
     );
