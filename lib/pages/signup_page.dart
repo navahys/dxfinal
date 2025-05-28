@@ -570,7 +570,6 @@ class _SignupPageState extends State<SignupPage> {
               color: AppColors.grey700,
             ),
             // Image.asset('assets/icons/functions/back_icon.png', height: 24, width: 24,),
-=======
     return Stack(
       children: [
         // 환영 문구 (절대 위치로 고정)
