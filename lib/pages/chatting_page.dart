@@ -24,17 +24,25 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FocusNode _textFieldFocusNode = FocusNode();
   final FirebaseService _firebaseService = FirebaseService();
+
+  // ValueNotifier로 텍스트 상태 관리 (깜빡임 방지)
+  final ValueNotifier<bool> _hasTextNotifier = ValueNotifier<bool>(false);
 
   String? _currentConversationId;
   bool _isLoading = false;
   bool _isTyping = false;
+  bool _hasText = false;
   ConversationModel? _conversation;
 
   @override
   void initState() {
     super.initState();
     _currentConversationId = widget.conversationId;
+
+    // 텍스트 변경 리스너
+    _messageController.addListener(_onTextChanged);
 
     // 초기 메시지가 있으면 자동으로 전송
     if (widget.initialMessage != null && widget.conversationId == null) {
@@ -68,16 +76,19 @@ class _ChatScreenState extends State<ChatScreen> {
           )
         ],
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: _currentConversationId != null
-                ? _buildMessageList()
-                : _buildEmptyState(),
-          ),
-          if (_isTyping) _buildTypingIndicator(),
-          _buildMessageInput(),
-        ],
+      body: GestureDetector(
+        onTap: _focusTextField, // 화면 터치 시 키보드 포커스
+        child: Column(
+          children: [
+            Expanded(
+              child: _currentConversationId != null
+                  ? _buildMessageList()
+                  : _buildEmptyState(),
+            ),
+            if (_isTyping) _buildTypingIndicator(),
+            _buildMessageInput(),
+          ],
+        ),
       ),
     );
   }
@@ -102,7 +113,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
         return ListView.builder(
           controller: _scrollController,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(12),
           itemCount: messages.length,
           itemBuilder: (context, index) {
             final message = messages[index];
@@ -119,7 +130,7 @@ class _ChatScreenState extends State<ChatScreen> {
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
+        margin: const EdgeInsets.symmetric(vertical: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * 0.8,
@@ -216,52 +227,64 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessageInput() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
       child: SafeArea(
         child: Row(
           children: [
             Expanded(
               child: Container(
                 width: double.infinity,
-                height: 64,
+                height: 50,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(48),
                   border: Border.all(
                     color: AppColors.grey200,
+                    width: 1,
                   ),
                 ),
-                child: TextField(
-                  controller: _messageController,
-                  decoration: InputDecoration(
-                    hintText: '무엇이든 이야기하세요',
-                    hintStyle: AppTypography.b4.withColor(AppColors.grey400),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
+                child: Row(
+                  children: [
+                    // 카메라 버튼
+                    Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: GestureDetector(
+                          onTap: () {
+                            // 카메라 기능 구현
+                            print('카메라 버튼 클릭');
+                          },
+                          child: SvgPicture.asset(
+                            'assets/icons/functions/camera.svg',
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
                     ),
-                  ),
-                  onSubmitted: (_) => _sendCurrentMessage(),
-                  maxLines: null,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            GestureDetector(
-              onTap: _isLoading || _isTyping ? null : _sendCurrentMessage,
-              child: Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: _isLoading || _isTyping
-                      ? AppColors.grey300
-                      : AppColors.main700,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Icon(
-                  Icons.send,
-                  color: Colors.white,
-                  size: 20,
+
+                    const SizedBox(width: 12,),
+
+                    // 텍스트 입력 필드
+                    Expanded(
+                      child: TextField(
+                        controller: _messageController,
+                        decoration: InputDecoration(
+                          hintText: '무엇이든 이야기하세요',
+                          hintStyle: AppTypography.b4.withColor(AppColors.grey400),
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                            // horizontal: 0,
+                            vertical: 14,
+                          ),
+                        ),
+                        onSubmitted: (_) => _sendCurrentMessage(),
+                        maxLines: null,
+                      ),
+                    ),
+
+                    const SizedBox(width: 12,),
+
+                    // 동적 버튼 (음성/전송)
+                    _buildDynamicButton(),
+                  ],
                 ),
               ),
             ),
@@ -376,6 +399,60 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       }
     });
+  }
+
+  // 텍스트 변경 감지
+  void _onTextChanged() {
+    final hasText = _messageController.text.trim().isNotEmpty;
+    _hasTextNotifier.value = hasText;
+  }
+
+  // 키보드 포커스 주기
+  void _focusTextField() {
+    _textFieldFocusNode.requestFocus();
+  }
+
+  // 메시지 입력 부분에서 동적 버튼만 ValueListenableBuilder로 감싸기
+  Widget _buildDynamicButton() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _hasTextNotifier,
+      builder: (context, hasText, child) {
+        return Padding(
+          padding: const EdgeInsets.only(right: 12),
+          child: GestureDetector(
+            onTap: () {
+              if (hasText) {
+                _sendCurrentMessage();
+              } else {
+                print("음성 버튼 클릭");
+              }
+            },
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 150),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+              child: hasText
+                  ? SvgPicture.asset(
+                'assets/icons/functions/Paper_Plane.svg',
+                width: 28,
+                height: 28,
+                key: ValueKey('send'),
+              )
+                  : SvgPicture.asset(
+                'assets/icons/functions/voice.svg',
+                width: 28,
+                height: 28,
+                key: ValueKey('voice'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   // OpenAI API 실패 시 대체 응답
