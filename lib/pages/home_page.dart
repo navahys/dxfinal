@@ -73,7 +73,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _showLeftGradient = _scrollController.offset > 0;
       _showRightGradient = _scrollController.offset <
-          _scrollController.position.maxScrollExtent;
+          (_scrollController.position.maxScrollExtent - 1);
     });
   }
 
@@ -121,8 +121,9 @@ class _HomePageState extends State<HomePage> {
 
                     // 검색창
                     Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 24),
                       padding: const EdgeInsets.all(1.5),
-                      width: 312,
+                      width: double.infinity,
                       height: 48,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
@@ -250,7 +251,7 @@ class _HomePageState extends State<HomePage> {
                                       const Color(0xFFF3F5F2).withOpacity(0.0),
                                       const Color(0xFFF3F5F2),
                                     ],
-                                    stops: [0.9, 1.0],
+                                    stops: [0.1, 1.0],
                                   ),
                                 ),
                               ),
@@ -331,7 +332,7 @@ class _HomePageState extends State<HomePage> {
             child: Center(
               child: Container(
                 width: 360,
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                // padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -344,40 +345,54 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
                         '겨울철 식물 관리 팁 \u{26C4}',
                         style: AppTypography.s1.withColor(AppColors.grey900,),
+                        ),
                       ),
                       const SizedBox(height: 16),
 
                       // 2열 그리드로 식물 관리 팁 카드들 배치
                       // 모든 GridView/Row/Column 대신 이걸로 교체
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          _buildPlantTipCard(
-                              '겨울철 물주기, 깍지벌레 관리 팁',
-                              'assets/images/plant_tip1.png'
-                          ),
-                          _buildPlantTipCard(
-                              '겨울 걱정 NO! 겨울철\n식물 이사 고민 줄여요',
-                              'assets/images/plant_tip2.png'
-                          ),
-                          _buildPlantTipCard(
-                              '실내 공기 정화 식물로\n겨울철 건강 지키기',
-                              'assets/images/plant_tip3.png'
-                          ),
-                          _buildPlantTipCard(
-                              '토분이 관리하기 쉽다고? 누가!',
-                              'assets/images/plant_tip4.png'
-                          ),
-                        ],
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            _buildPlantTipCard(
+                                '겨울철 물주기, 깍지벌레 관리 팁',
+                                'assets/images/plant_tip1.png'
+                            ),
+                            _buildPlantTipCard(
+                                '겨울 걱정 NO! 겨울철\n식물 이사 고민 줄여요',
+                                'assets/images/plant_tip2.png'
+                            ),
+                            _buildPlantTipCard(
+                                '실내 공기 정화 식물로\n겨울철 건강 지키기',
+                                'assets/images/plant_tip3.png'
+                            ),
+                            _buildPlantTipCard(
+                                '토분이 관리하기 쉽다고? 누가!',
+                                'assets/images/plant_tip4.png'
+                            ),
+                          ],
+                        ),
                       ),
 
                       // 하단 여백 (네비게이션 바와 겹치지 않게)
                       const SizedBox(height: 36),
 
+                      Image.asset(
+                        'assets/images/ad_banner.png',
+                        width: double.infinity,
+                        height: 60,
+                        fit: BoxFit.fitWidth,
+                        filterQuality: FilterQuality.high,
+                      ),
 
                     ],
                   ),
