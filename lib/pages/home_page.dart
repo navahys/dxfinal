@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tiiun/pages/chatting_page.dart';
 import 'package:tiiun/pages/buddy_page.dart';
+import 'package:tiiun/pages/conversation_list_page.dart';
 import 'package:tiiun/pages/info_page.dart';
 import 'package:tiiun/pages/my_page.dart';
 import 'package:tiiun/design_system/colors.dart';
@@ -22,6 +23,15 @@ class _HomePageState extends State<HomePage> {
   bool _showLeftGradient = false;
   bool _showRightGradient = false;
 
+  Map<String, dynamic> quickActionMessages = {
+    '자랑거리': '나 자랑할 거 있어!',
+    '고민거리': '요즘 고민이 있어서 이야기하고 싶어',
+    '위로가 필요할 때': '나 좀 위로해줘',
+    '시시콜콜': '심심해! 나랑 이야기하자!',
+    '끝말 잇기': '끝말 잇기 하자!',
+    '화가 나요': '나 너무 화나는 일 있어',
+  };
+
   void _goToChatScreen() {
     if (_textController.text.trim().isNotEmpty) {
       String message = _textController.text.trim();
@@ -34,6 +44,29 @@ class _HomePageState extends State<HomePage> {
             initialMessage: message,
           ),
         ),
+      );
+    }
+  }
+
+  void _handleQuickAction(String actionText) {
+    if (actionText == '이전 대화') {
+      // 이전 대화 페이지로 이동
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ConversationListPage(),
+        ),
+      );
+    } else {
+      // 해당 메시지로 채팅 페이지로 이동
+      String message = quickActionMessages[actionText] ?? actionText;
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChatScreen(
+                  initialMessage: message,
+              ),
+          ),
       );
     }
   }
@@ -200,7 +233,7 @@ class _HomePageState extends State<HomePage> {
                               const SizedBox(width: 8),
                               _buildQuickActionText('위로가 필요할 때'),
                               const SizedBox(width: 8),
-                              _buildQuickActionText('시시콜콜콜콜콜'),
+                              _buildQuickActionText('시시콜콜'),
                               const SizedBox(width: 8),
                               _buildQuickActionText('끝말 잇기'),
                               const SizedBox(width: 8),
@@ -220,17 +253,19 @@ class _HomePageState extends State<HomePage> {
                               left: 0,
                               top: 0,
                               bottom: 0,
-                              child: Container(
-                                width: 24,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [
-                                      const Color(0xFFF3F5F2),
-                                      const Color(0xFFF3F5F2).withOpacity(0.0),
-                                    ],
-                                    stops: [0.1, 1.0],
+                              child: IgnorePointer(
+                                child: Container(
+                                  width: 24,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        const Color(0xFFF3F5F2),
+                                        const Color(0xFFF3F5F2).withOpacity(0.0),
+                                      ],
+                                      stops: [0.1, 1.0],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -241,17 +276,19 @@ class _HomePageState extends State<HomePage> {
                               right: 0,
                               top: 0,
                               bottom: 0,
-                              child: Container(
-                                width: 24,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [
-                                      const Color(0xFFF3F5F2).withOpacity(0.0),
-                                      const Color(0xFFF3F5F2),
-                                    ],
-                                    stops: [0.1, 1.0],
+                              child: IgnorePointer(
+                                child: Container(
+                                  width: 24,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        const Color(0xFFF3F5F2).withOpacity(0.0),
+                                        const Color(0xFFF3F5F2),
+                                      ],
+                                      stops: [0.1, 1.0],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -408,9 +445,7 @@ class _HomePageState extends State<HomePage> {
   // 아이콘 + 텍스트가 있는 퀵 액션 버튼 (이전 대화용)
   Widget _buildQuickActionWithIcon(String text, String iconPath) {
     return GestureDetector(
-      onTap: () {
-        // 버튼 동작 구현
-      },
+      onTap: () => _handleQuickAction(text), // 누르면 대화 목록 페이지로 이동
       child: Container(
         height: 32,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -497,9 +532,7 @@ class _HomePageState extends State<HomePage> {
   // 텍스트만 있는 퀵 액션 버튼
   Widget _buildQuickActionText(String text) {
     return GestureDetector(
-      onTap: () {
-        // 버튼 동작 구현
-      },
+      onTap: () => _handleQuickAction(text),
       child: Container(
         height: 32,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
