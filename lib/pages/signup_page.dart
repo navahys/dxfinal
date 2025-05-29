@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tiiun/services/firebase_service.dart'; // 추가
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -20,6 +21,7 @@ class _SignupPageState extends State<SignupPage> {
   final _passwordController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
   final _nicknameController = TextEditingController();
+  final _firebaseService = FirebaseService(); // FirebaseService 인스턴스 추가
 
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -135,7 +137,7 @@ class _SignupPageState extends State<SignupPage> {
     }
   }
 
-  // Firebase 회원가입 처리
+  // Firebase 회원가입 처리 - 수정된 부분
   Future<void> _handleSignUp() async {
     if (!_isFormValid) return;
 
@@ -144,15 +146,23 @@ class _SignupPageState extends State<SignupPage> {
     });
 
     try {
-      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      // FirebaseService를 사용한 회원가입
+      final userModel = await _firebaseService.signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text,
+        userName: _nicknameController.text.trim(), // nickname → userName
       );
 
-      await userCredential.user?.updateDisplayName(_nicknameController.text.trim());
-
-      if (mounted) {
-        _nextStep(); // Step 2로 이동
+      if (userModel != null) {
+        // 회원가입 성공 - Step 2로 이동
+        if (mounted) {
+          _nextStep();
+        }
+      } else {
+        // 회원가입 실패
+        if (mounted) {
+          _showErrorSnackBar('회원가입에 실패했습니다. 다시 시도해주세요.');
+        }
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage = _getErrorMessage(e.code);
@@ -161,7 +171,7 @@ class _SignupPageState extends State<SignupPage> {
       }
     } catch (e) {
       if (mounted) {
-        _showErrorSnackBar('알 수 없는 오류가 발생했습니다: $e');
+        _showErrorSnackBar('회원가입 중 오류가 발생했습니다: $e');
       }
     } finally {
       if (mounted) {
@@ -178,11 +188,13 @@ class _SignupPageState extends State<SignupPage> {
       case 'email-already-in-use':
         return '이미 사용 중인 이메일입니다.';
       case 'weak-password':
-        return '비밀번호가 너무 약합니다.';
+        return '비밀번호가 너무 약합니다. 더 강한 비밀번호를 사용해주세요.';
       case 'invalid-email':
         return '유효하지 않은 이메일 형식입니다.';
+      case 'operation-not-allowed':
+        return '이메일/비밀번호 계정이 비활성화되었습니다.';
       default:
-        return '오류가 발생했습니다.';
+        return '회원가입 중 오류가 발생했습니다.';
     }
   }
 
