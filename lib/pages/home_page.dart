@@ -226,13 +226,13 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 95),
                   SvgPicture.asset(
                     'assets/images/tiiun_logo.svg',
                     width: 80,
                     height: 40,
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 126),
                   Container(
                     margin: const EdgeInsets.symmetric(horizontal: 24),
                     padding: const EdgeInsets.all(1.5),
@@ -388,8 +388,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 14),
+
+                  // 겨울철 식물 관리 팁
                   Container(
                     width: double.infinity,
+                    // height: 700,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration: const BoxDecoration(
                       color: Colors.white,
@@ -410,47 +413,45 @@ class _HomePageState extends State<HomePage> {
 
                           const SizedBox(height: 16),
 
-                          Container(
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                const cardWidth = 156.0;
-                                final screenWidth = constraints.maxWidth;
-
-                                // 카드 2개와 좌우 여백 고려한 가변 간격 계산
-                                double spacing = (screenWidth - (cardWidth * 2)) / 3;
-
-                                // 최소 간격 보장
-                                if (spacing < 8) spacing = 8;
-
-                                return Wrap(
-                                  spacing: spacing,
-                                  runSpacing: 16,
-                                  children: [
-                                    _buildFixedWidthPlantTipCard('겨울철 물주기, 깍지벌레 관리 팁', 'assets/images/plant_tip1.png'),
-                                    _buildFixedWidthPlantTipCard('겨울 걱정 NO! 겨울철\n식물 이사 고민 줄여요', 'assets/images/plant_tip2.png'),
-                                    _buildFixedWidthPlantTipCard('실내 공기 정화 식물로\n겨울철 건강 지키기', 'assets/images/plant_tip3.png'),
-                                    _buildFixedWidthPlantTipCard('토분이 관리하기 쉽다고? 누가!', 'assets/images/plant_tip4.png'),
-                                  ],
-                                );
-                              },
-                            ),
+                          // Wrap으로 식물 관리 팁 카드들 배치
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              _buildPlantTipCard(
+                                  '겨울철 물주기, 깍지벌레 관리 팁',
+                                  'assets/images/plant_tip1.png'
+                              ),
+                              _buildPlantTipCard(
+                                  '겨울 걱정 NO! 겨울철 식물 이사 고민 줄여요',
+                                  'assets/images/plant_tip2.png'
+                              ),
+                              _buildPlantTipCard(
+                                  '실내 공기 정화 식물로 겨울철 건강 지키기',
+                                  'assets/images/plant_tip3.png'
+                              ),
+                              _buildPlantTipCard(
+                                  '토분이 관리하기 쉽다고? 누가!',
+                                  'assets/images/plant_tip4.png'
+                              ),
+                            ],
                           ),
 
-                          const SizedBox(height: 24),
-                          AspectRatio(
-                            aspectRatio: 6.0,
-                            child: Image.asset(
-                              'assets/images/ad_banner.png',
-                              width: double.infinity,
-                              fit: BoxFit.fitWidth,
-                              filterQuality: FilterQuality.high,
-                            ),
-                          ),
-                          const SizedBox(height: 24),
                         ],
                       ),
                     ),
                   ),
+
+                  AspectRatio(
+                    aspectRatio: 6.0,
+                    child: Image.asset(
+                      'assets/images/ad_banner.png',
+                      width: double.infinity,
+                      fit: BoxFit.fitWidth,
+                      filterQuality: FilterQuality.high,
+                    ),
+                  ),
+                  const SizedBox(height: 24,),
                 ],
               ),
             ),
@@ -490,24 +491,29 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 2열 그리드용 식물 관리 팁 카드 위젯
+  // 2열 그리드용 식물 관리 팁 카드 위젯 (세로형)
   Widget _buildPlantTipCard(String title, String imagePath) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4), // 카드 간 가로 간격을 조절
+    // 화면 너비에 따라 카드 너비 계산 (2열 그리드)
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = (screenWidth - 48 - 8) / 2; // 패딩 40 + 간격 8을 고려
+
+    return SizedBox(
+      width: cardWidth,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min, // 핵심!
         children: [
-          AspectRatio(
-            aspectRatio: 1.0,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: AspectRatio(
+              aspectRatio: 1.0, // 정사각형 비율
               child: Image.asset(
                 imagePath,
+                width: double.infinity,
                 fit: BoxFit.cover,
                 filterQuality: FilterQuality.high,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
+                    width: double.infinity,
                     color: AppColors.grey100,
                     child: const Icon(Icons.eco, size: 48, color: Colors.green),
                   );
@@ -515,15 +521,12 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           Text(
             title,
+            style: AppTypography.b2.withColor(AppColors.grey800),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: AppTypography.b2.copyWith(
-              color: AppColors.grey800,
-              height: 1.3,
-            ),
           ),
         ],
       ),
@@ -636,45 +639,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  Widget _buildFixedWidthPlantTipCard(String title, String imagePath) {
-    return SizedBox(
-      width: 156, // 원하는 고정 가로 길이
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AspectRatio(
-            aspectRatio: 1.0,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-                filterQuality: FilterQuality.high,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: AppColors.grey100,
-                    child: const Icon(Icons.eco, size: 48, color: Colors.green),
-                  );
-                },
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: AppTypography.b2.copyWith(
-              color: AppColors.grey800,
-              height: 1.3,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
 
   Widget _buildNavItem({
     required int index,
