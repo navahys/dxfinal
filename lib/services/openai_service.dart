@@ -1,10 +1,10 @@
-// lib/services/openai_service.dart
+// lib/services/openai_service.dart (GitHub용 - API 키 제거됨)
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class OpenAIService {
-  // 🔑 OpenAI API 키
-  static const String _apiKey = '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';
+  // 🚫 보안상 API 키는 별도 관리 필요
+  static const String _apiKey = ''; // GitHub에는 빈 문자열로 업로드
 
   // ✅ 올바른 API URL
   static const String _baseUrl = 'https://api.openai.com/v1';
@@ -34,9 +34,15 @@ class OpenAIService {
   // ChatGPT와 대화하기
   static Future<String> getChatResponse({
     required String message,
-    required String conversationType, // 'normal', '자랑거리', '고민거리' 등
+    required String conversationType,
     List<Map<String, String>>? conversationHistory,
   }) async {
+    // 🚫 API 키가 없으면 폴백 응답 사용
+    if (_apiKey.isEmpty) {
+      print('⚠️ API 키가 설정되지 않음 - 폴백 응답 사용');
+      return _getFallbackResponse(conversationType);
+    }
+
     try {
       print('🚀 OpenAI API 호출 시작: $message');
 
@@ -135,24 +141,30 @@ class OpenAIService {
 
   // 🔍 디버깅용 공개 메서드들
   static String getApiKeyPrefix() {
-    return _apiKey.length > 10 ? _apiKey.substring(0, 10) : _apiKey;
+    return _apiKey.isEmpty ? 'API 키 없음' : _apiKey.substring(0, _apiKey.length > 10 ? 10 : _apiKey.length);
   }
 
   static int getApiKeyLength() {
     return _apiKey.length;
   }
 
-  // 🔧 수정된 API 키 검증 메서드 (디버깅 포함)
+  // 🔧 API 키 검증 메서드
   static bool isApiKeyValid() {
     print('🔍 API 키 검증 중...');
     print('🔍 API 키 비어있나? ${_apiKey.isEmpty}');
-    print('🔍 API 키 시작 문자: ${_apiKey.startsWith('sk-')}');
+
+    if (_apiKey.isEmpty) {
+      print('⚠️ API 키가 설정되지 않음 - 로컬에서만 설정하세요');
+      return false;
+    }
+
+    print('🔍 API 키 시작 문자 (sk-): ${_apiKey.startsWith('sk-')}');
     print('🔍 API 키 길이: ${_apiKey.length}');
 
     bool isValid = _apiKey.isNotEmpty &&
         _apiKey != 'your-api-key-here' &&
         _apiKey.startsWith('sk-') &&
-        _apiKey.length > 20; // 최소 길이 체크
+        _apiKey.length >= 50;
 
     print('🔍 최종 검증 결과: $isValid');
     return isValid;
