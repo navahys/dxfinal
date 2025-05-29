@@ -3,6 +3,7 @@ import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tiiun/pages/settings_page.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
@@ -20,69 +21,36 @@ class MyPage extends StatelessWidget {
               const SizedBox(height: 20),
               Row(
                 children: [
-                  Text(
-                  '마이페이지',
-                  style: AppTypography.s1.withColor(AppColors.grey900),
+                  Expanded(
+                    child: Text(
+                    '마이페이지',
+                    style: AppTypography.s1.withColor(AppColors.grey900),
+                    ),
                   ),
-                  SizedBox(width: 10,),
-                  SvgPicture.asset('assets/icons/')
-                ]
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SettingsPage()),
+                      );
+                    },
+                    child: SvgPicture.asset(
+                      'assets/icons/functions/icon_setting.svg',
+                      width: 24,
+                      height: 24,
+                    ),
+                  )
+                ],
               ),
-              const SizedBox(height: 32),
+
+              SizedBox(height: 12,),
 
               // 프로필 섹션
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: AppColors.main700.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Icon(
-                        Icons.person,
-                        color: AppColors.main700,
-                        size: 32,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '사용자님',
-                            style: AppTypography.b1.withColor(AppColors.grey900),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Tiiun과 함께 성장하고 있어요',
-                            style: AppTypography.b4.withColor(AppColors.grey600),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: AppColors.grey400,
-                      size: 20,
-                    ),
-                  ],
+              Center(
+                child: SvgPicture.asset(
+                  'assets/images/Profile_image.svg',
+                  width: 80,
+                  height: 80,
                 ),
               ),
 
