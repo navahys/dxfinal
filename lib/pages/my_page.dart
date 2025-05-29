@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MyPage extends StatelessWidget {
   const MyPage({super.key});
@@ -9,17 +10,24 @@ class MyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFFF3F5F2),
+      color: Colors.white,
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Text(
-                'My',
-                style: AppTypography.h1.withColor(AppColors.grey900),),
+              Row(
+                children: [
+                  Text(
+                  '마이페이지',
+                  style: AppTypography.s1.withColor(AppColors.grey900),
+                  ),
+                  SizedBox(width: 10,),
+                  SvgPicture.asset('assets/icons/')
+                ]
+              ),
               const SizedBox(height: 32),
 
               // 프로필 섹션
