@@ -6,6 +6,7 @@ import 'package:tiiun/models/conversation_model.dart';
 import 'package:tiiun/models/message_model.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
+import 'dart:ui';
 
 class ChatScreen extends StatefulWidget {
   final String? initialMessage;
@@ -33,7 +34,6 @@ class _ChatScreenState extends State<ChatScreen> {
   String? _currentConversationId;
   bool _isLoading = false;
   bool _isTyping = false;
-  bool _hasText = false;
   ConversationModel? _conversation;
 
   @override
@@ -53,6 +53,16 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   @override
+  void dispose() {
+    _messageController.removeListener(_onTextChanged);
+    _messageController.dispose();
+    _scrollController.dispose();
+    _textFieldFocusNode.dispose();
+    _hasTextNotifier.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -60,6 +70,7 @@ class _ChatScreenState extends State<ChatScreen> {
         toolbarHeight: 56,
         backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0, // 스크롤해도 색상 변하지 않게
         leading: IconButton(
           padding: EdgeInsets.fromLTRB(0, 20, 0, 12),
           icon: SvgPicture.asset(
@@ -76,19 +87,98 @@ class _ChatScreenState extends State<ChatScreen> {
           )
         ],
       ),
-      body: GestureDetector(
-        onTap: _focusTextField, // 화면 터치 시 키보드 포커스
-        child: Column(
-          children: [
-            Expanded(
-              child: _currentConversationId != null
-                  ? _buildMessageList()
-                  : _buildEmptyState(),
+      body: Stack(
+        children: [
+          // 메인 콘텐츠 (입력창과 겹치도록)
+          GestureDetector(
+            onTap: _focusTextField,
+            child: Column(
+              children: [
+                Expanded(
+                  child: _currentConversationId != null
+                      ? _buildMessageList()
+                      : _buildEmptyState(),
+                ),
+                if (_isTyping) _buildTypingIndicator(),
+                // 여백 제거 - 메시지들이 입력창 뒤까지 올라오도록
+              ],
             ),
-            if (_isTyping) _buildTypingIndicator(),
-            _buildMessageInput(),
-          ],
-        ),
+          ),
+
+          // 하단 고정 블러 입력창 (주변은 투명, 입력칸만 블러)
+          Positioned(
+            left: 12,
+            right: 12,
+            bottom: MediaQuery.of(context).padding.bottom + 16,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(48),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 8.0, sigmaY: 8.0),
+                child: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.8), // 입력칸만 반투명
+                    borderRadius: BorderRadius.circular(48),
+                    border: Border.all(
+                      color: AppColors.grey200.withOpacity(0.8),
+                      width: 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 12,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      // 카메라 버튼
+                      Padding(
+                        padding: const EdgeInsets.only(left: 12),
+                        child: GestureDetector(
+                          onTap: () {
+                            print('카메라 버튼 클릭');
+                          },
+                          child: SvgPicture.asset(
+                            'assets/icons/functions/camera.svg',
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      // 텍스트 입력 필드
+                      Expanded(
+                        child: TextField(
+                          controller: _messageController,
+                          focusNode: _textFieldFocusNode,
+                          decoration: InputDecoration(
+                            hintText: '무엇이든 이야기하세요',
+                            hintStyle: AppTypography.b4.withColor(AppColors.grey400),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 14,
+                            ),
+                          ),
+                          onSubmitted: (_) => _sendCurrentMessage(),
+                          maxLines: null,
+                        ),
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      // 동적 버튼 (음성/전송)
+                      _buildDynamicButton(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -111,12 +201,16 @@ class _ChatScreenState extends State<ChatScreen> {
           return _buildEmptyState();
         }
 
+        // 메시지 순서를 뒤집어서 최신 메시지가 아래에 오도록
+        final reversedMessages = messages.reversed.toList();
+
         return ListView.builder(
           controller: _scrollController,
-          padding: const EdgeInsets.all(12),
-          itemCount: messages.length,
+          reverse: true, // ListView를 뒤집어서 아래부터 시작
+          padding: EdgeInsets.fromLTRB(12, 82, 12, 12), // 패딩도 뒤집음
+          itemCount: reversedMessages.length,
           itemBuilder: (context, index) {
-            final message = messages[index];
+            final message = reversedMessages[index];
             return _buildMessageBubble(message);
           },
         );
@@ -225,80 +319,62 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildMessageInput() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
-      child: SafeArea(
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                height: 50,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(48),
-                  border: Border.all(
-                    color: AppColors.grey200,
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    // 카메라 버튼
-                    Padding(
-                        padding: const EdgeInsets.only(left: 12),
-                        child: GestureDetector(
-                          onTap: () {
-                            // 카메라 기능 구현
-                            print('카메라 버튼 클릭');
-                          },
-                          child: SvgPicture.asset(
-                            'assets/icons/functions/camera.svg',
-                            width: 24,
-                            height: 24,
-                          ),
-                        ),
-                    ),
-
-                    const SizedBox(width: 12,),
-
-                    // 텍스트 입력 필드
-                    Expanded(
-                      child: TextField(
-                        controller: _messageController,
-                        decoration: InputDecoration(
-                          hintText: '무엇이든 이야기하세요',
-                          hintStyle: AppTypography.b4.withColor(AppColors.grey400),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                            // horizontal: 0,
-                            vertical: 14,
-                          ),
-                        ),
-                        onSubmitted: (_) => _sendCurrentMessage(),
-                        maxLines: null,
-                      ),
-                    ),
-
-                    const SizedBox(width: 12,),
-
-                    // 동적 버튼 (음성/전송)
-                    _buildDynamicButton(),
-                  ],
-                ),
+  // 메시지 입력 부분에서 동적 버튼만 ValueListenableBuilder로 감싸기
+  Widget _buildDynamicButton() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _hasTextNotifier,
+      builder: (context, hasText, child) {
+        return Padding(
+          padding: const EdgeInsets.only(right: 12),
+          child: GestureDetector(
+            onTap: () {
+              if (hasText) {
+                _sendCurrentMessage();
+              } else {
+                print("음성 버튼 클릭");
+              }
+            },
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 150),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+              child: hasText
+                  ? SvgPicture.asset(
+                'assets/icons/functions/Paper_Plane.svg',
+                width: 28,
+                height: 28,
+                key: ValueKey('send'),
+              )
+                  : SvgPicture.asset(
+                'assets/icons/functions/voice.svg',
+                width: 28,
+                height: 28,
+                key: ValueKey('voice'),
               ),
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
   void _sendCurrentMessage() {
     final message = _messageController.text.trim();
     if (message.isNotEmpty) {
+      // 메시지 전송 전에 먼저 스크롤 위치 유지
+      final currentScrollOffset = _scrollController.hasClients ? _scrollController.offset : 0.0;
+
       _sendMessage(message);
       _messageController.clear();
+
+      // 텍스트 클리어 후 스크롤 위치 복원
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(currentScrollOffset);
+      }
     }
   }
 
@@ -370,7 +446,7 @@ class _ChatScreenState extends State<ChatScreen> {
         sender: 'ai',
       );
 
-      // 스크롤을 맨 아래로
+      // 스크롤을 맨 아래로 (지연 시간 늘림)
       _scrollToBottom();
 
     } catch (e) {
@@ -390,10 +466,11 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
+    // reverse ListView에서는 0이 맨 아래
+    Future.delayed(Duration(milliseconds: 100), () {
+      if (_scrollController.hasClients && mounted) {
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
+          0.0, // reverse ListView에서는 0이 맨 아래
           duration: Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
@@ -409,50 +486,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   // 키보드 포커스 주기
   void _focusTextField() {
-    _textFieldFocusNode.requestFocus();
-  }
-
-  // 메시지 입력 부분에서 동적 버튼만 ValueListenableBuilder로 감싸기
-  Widget _buildDynamicButton() {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _hasTextNotifier,
-      builder: (context, hasText, child) {
-        return Padding(
-          padding: const EdgeInsets.only(right: 12),
-          child: GestureDetector(
-            onTap: () {
-              if (hasText) {
-                _sendCurrentMessage();
-              } else {
-                print("음성 버튼 클릭");
-              }
-            },
-            child: AnimatedSwitcher(
-              duration: Duration(milliseconds: 150),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-              child: hasText
-                  ? SvgPicture.asset(
-                'assets/icons/functions/Paper_Plane.svg',
-                width: 28,
-                height: 28,
-                key: ValueKey('send'),
-              )
-                  : SvgPicture.asset(
-                'assets/icons/functions/voice.svg',
-                width: 28,
-                height: 28,
-                key: ValueKey('voice'),
-              ),
-            ),
-          ),
-        );
-      },
-    );
+    FocusScope.of(context).requestFocus(_textFieldFocusNode);
   }
 
   // OpenAI API 실패 시 대체 응답

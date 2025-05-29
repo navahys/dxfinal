@@ -654,13 +654,16 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SvgPicture.asset(
-              isSelected ? activeIcon : inactiveIcon,
-              width: 24,
-              height: 24,
-              colorFilter: ColorFilter.mode(
-                isSelected ? AppColors.grey900 : AppColors.grey300,
-                BlendMode.srcIn,
+            Container(
+              padding: EdgeInsets.all(5),
+              child: SvgPicture.asset(
+                isSelected ? activeIcon : inactiveIcon,
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(
+                  isSelected ? AppColors.grey900 : AppColors.grey300,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
             const SizedBox(height: 2),
