@@ -6,6 +6,9 @@ import 'package:tiiun/pages/info_page.dart';
 import 'package:tiiun/pages/my_page.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
+import 'package:tiiun/services/firebase_service.dart';
+import 'package:tiiun/services/openai_service.dart';
+import 'package:tiiun/models/conversation_model.dart';
 import 'dart:ui';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -19,18 +22,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final FirebaseService _firebaseService = FirebaseService();
   int _selectedIndex = 0;
   bool _showLeftGradient = false;
   bool _showRightGradient = false;
-
-  Map<String, dynamic> quickActionMessages = {
-    '자랑거리': '나 자랑할 거 있어!',
-    '고민거리': '요즘 고민이 있어서 이야기하고 싶어',
-    '위로가 필요할 때': '나 좀 위로해줘',
-    '시시콜콜': '심심해! 나랑 이야기하자!',
-    '끝말 잇기': '끝말 잇기 하자!',
-    '화가 나요': '나 너무 화나는 일 있어',
-  };
 
   void _goToChatScreen() {
     if (_textController.text.trim().isNotEmpty) {
@@ -48,26 +43,124 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _handleQuickAction(String actionText) {
+  void _handleQuickAction(String actionText) async {
     if (actionText == '이전 대화') {
       // 이전 대화 페이지로 이동
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ConversationListPage(),
+          builder: (context) => ConversationListPage(),
         ),
       );
     } else {
-      // 해당 메시지로 채팅 페이지로 이동
-      String message = quickActionMessages[actionText] ?? actionText;
-      Navigator.push(
+      // 퀵액션으로 새 대화 생성
+      try {
+        // 로딩 표시
+        _showLoadingDialog();
+
+        // 1. 퀵액션으로 대화 시작 (자동으로 첫 메시지 추가됨)
+        final conversation = await _firebaseService.startQuickActionConversation(actionText);
+
+        if (conversation == null) {
+          throw Exception('대화 생성 실패');
+        }
+
+        // 2. AI 응답 생성
+        final userMessage = _firebaseService.quickActionMessages[actionText] ?? '안녕하세요!';
+        String aiResponse;
+
+        if (OpenAIService.isApiKeyValid()) {
+          aiResponse = await OpenAIService.getChatResponse(
+            message: userMessage,
+            conversationType: actionText,
+          );
+        } else {
+          // API 키가 없으면 기본 응답 사용
+          aiResponse = _generateFallbackResponse(actionText);
+        }
+
+        // 3. AI 응답 저장
+        await _firebaseService.addMessage(
+          conversationId: conversation.conversationId!,
+          content: aiResponse,
+          sender: 'ai',
+        );
+
+        // 로딩 다이얼로그 닫기
+        if (mounted) Navigator.of(context).pop();
+
+        // 4. 채팅 화면으로 이동
+        Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ChatScreen(
-                  initialMessage: message,
-              ),
+            builder: (context) => ChatScreen(
+              conversationId: conversation.conversationId!,
+            ),
           ),
-      );
+        );
+      } catch (e) {
+        // 로딩 다이얼로그 닫기
+        if (mounted) Navigator.of(context).pop();
+
+        print('퀵액션 처리 오류: $e');
+
+        // 에러 발생 시 기본 채팅 화면으로 이동
+        final message = _firebaseService.quickActionMessages[actionText] ?? actionText;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              initialMessage: message,
+            ),
+          ),
+        );
+
+        // 에러 스낵바 표시
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('AI 응답 생성 중 오류가 발생했습니다'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      }
+    }
+  }
+
+  // 로딩 다이얼로그 표시
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(width: 16),
+            Text('틔운이가 생각하고 있어요...'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // OpenAI API 실패 시 대체 응답
+  String _generateFallbackResponse(String actionType) {
+    switch (actionType) {
+      case '자랑거리':
+        return '와! 정말 자랑스러운 일이네요! 🎉 더 자세히 얘기해주세요!';
+      case '고민거리':
+        return '고민이 있으시는군요 💭 편하게 말씀해주세요. 제가 들어드릴게요.';
+      case '위로가 필요할 때':
+        return '힘든 시간을 보내고 계시는군요 🫂 괜찮아요, 모든 게 다 지나갈 거예요.';
+      case '시시콜콜':
+        return '안녕하세요! 😄 심심하셨군요! 저도 이야기하고 싶었어요.';
+      case '끝말 잇기':
+        return '끝말잇기 좋아요! 🎮 제가 먼저 시작할게요. "사과"!';
+      case '화가 나요':
+        return '화가 나셨군요 😤 무슨 일이 있으셨나요? 저한테 털어놓으세요.';
+      default:
+        return '안녕하세요! 😊 무엇을 도와드릴까요?';
     }
   }
 
@@ -80,17 +173,16 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_onScroll); // 리스너 추가
+    _scrollController.addListener(_onScroll);
 
     // 초기 그라데이션 상태 설정
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(Duration(milliseconds: 100), () {
         if (_scrollController.hasClients && mounted) {
-          _onScroll(); // 직접 _onScroll 호출
+          _onScroll();
         }
       });
     });
-
   }
 
   @override
@@ -110,7 +202,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // 홈 탭 내용 (기존 HomePage 내용)
+  // 홈 탭 내용
   Widget _buildHomeContent() {
     return Container(
       color: const Color(0xFFF3F5F2),
@@ -121,8 +213,8 @@ class _HomePageState extends State<HomePage> {
             child: SafeArea(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
-                  minHeight: 400, // 최소 높이
-                  maxHeight: 574, // 최대 높이 (y축 574)
+                  minHeight: 400,
+                  maxHeight: 574,
                 ),
                 child: Column(
                   children: [
@@ -140,7 +232,7 @@ class _HomePageState extends State<HomePage> {
                         ],
                       ),
                     ),
-                    const Spacer(flex: 2), // 유연한 공간
+                    const Spacer(flex: 2),
 
                     // 로고
                     Container(
@@ -150,7 +242,7 @@ class _HomePageState extends State<HomePage> {
                         height: 40,
                       ),
                     ),
-                    const Spacer(flex: 2), // 유연한 공간
+                    const Spacer(flex: 2),
 
                     // 검색창
                     Container(
@@ -211,7 +303,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                    SizedBox(height: 12,),
+                    SizedBox(height: 12),
 
                     // 퀵 액션 버튼들 (가로 스크롤)
                     SizedBox(
@@ -238,16 +330,9 @@ class _HomePageState extends State<HomePage> {
                               _buildQuickActionText('끝말 잇기'),
                               const SizedBox(width: 8),
                               _buildQuickActionText('화가 나요'),
-                              const SizedBox(width: 8),
-                              _buildQuickActionText('화가 나요'),
-                              const SizedBox(width: 8),
-                              _buildQuickActionText('화가 나요'),
-                              const SizedBox(width: 8),
-                              _buildQuickActionText('화가 나요'),
-                              // const SizedBox(width: 24), // 마지막 여백
                             ],
                           ),
-                          // 왼쪽 그라데이션 (조건부 표시)
+                          // 왼쪽 그라데이션
                           if (_showLeftGradient)
                             Positioned(
                               left: 0,
@@ -270,7 +355,7 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                             ),
-                          // 오른쪽 그라데이션 (조건부 표시)
+                          // 오른쪽 그라데이션
                           if (_showRightGradient)
                             Positioned(
                               right: 0,
@@ -297,7 +382,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
 
-                    SizedBox(height: 126,),
+                    SizedBox(height: 126),
 
                     // 틔운 상태 창
                     Container(
@@ -322,33 +407,25 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const SizedBox(width: 2),
                           Text('적정 온도',
-                            style: AppTypography.b3.withColor(AppColors.grey700,),
+                            style: AppTypography.b3.withColor(AppColors.grey700),
                           ),
-
-                          const SizedBox(width: 12,),
-
+                          const SizedBox(width: 12),
                           Container(
                             width: 1,
                             height: 15,
                             color: AppColors.grey200,
                           ),
-
-                          const SizedBox(width: 12,),
-
+                          const SizedBox(width: 12),
                           SvgPicture.asset(
                             'assets/icons/functions/light_on.svg',
                             width: 24,
                             height: 24,
                           ),
-
-                          SizedBox(width: 2,),
-
+                          SizedBox(width: 2),
                           Text('조명 밝기 낮음',
-                            style: AppTypography.b3.withColor(AppColors.grey700,),
+                            style: AppTypography.b3.withColor(AppColors.grey700),
                           ),
-
                           const Spacer(),
-
                           SvgPicture.asset(
                             'assets/icons/functions/more.svg',
                             width: 24,
@@ -364,12 +441,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          // 겨울철 식물 관리 팁 섹션 (스크롤 가능한 영역)
+          // 겨울철 식물 관리 팁 섹션
           SliverToBoxAdapter(
             child: Center(
               child: Container(
                 width: 360,
-                // padding: EdgeInsets.symmetric(horizontal: 20),
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
@@ -382,18 +458,16 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                        '겨울철 식물 관리 팁 \u{26C4}',
-                        style: AppTypography.s1.withColor(AppColors.grey900,),
+                          '겨울철 식물 관리 팁 ⛄',
+                          style: AppTypography.s1.withColor(AppColors.grey900),
                         ),
                       ),
                       const SizedBox(height: 16),
 
                       // 2열 그리드로 식물 관리 팁 카드들 배치
-                      // 모든 GridView/Row/Column 대신 이걸로 교체
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 20),
                         child: Wrap(
@@ -420,7 +494,6 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
 
-                      // 하단 여백 (네비게이션 바와 겹치지 않게)
                       const SizedBox(height: 36),
 
                       Image.asset(
@@ -430,7 +503,6 @@ class _HomePageState extends State<HomePage> {
                         fit: BoxFit.fitWidth,
                         filterQuality: FilterQuality.high,
                       ),
-
                     ],
                   ),
                 ),
@@ -445,7 +517,7 @@ class _HomePageState extends State<HomePage> {
   // 아이콘 + 텍스트가 있는 퀵 액션 버튼 (이전 대화용)
   Widget _buildQuickActionWithIcon(String text, String iconPath) {
     return GestureDetector(
-      onTap: () => _handleQuickAction(text), // 누르면 대화 목록 페이지로 이동
+      onTap: () => _handleQuickAction(text),
       child: Container(
         height: 32,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -464,7 +536,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(width: 4),
             Text(
               text,
-              style: AppTypography.b4.withColor(AppColors.grey700,),
+              style: AppTypography.b4.withColor(AppColors.grey700),
             ),
           ],
         ),
@@ -472,7 +544,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // 2열 그리드용 식물 관리 팁 카드 위젯 (세로형)
+  // 2열 그리드용 식물 관리 팁 카드 위젯
   Widget _buildPlantTipCard(String title, String imagePath) {
     return SizedBox(
       width: 156,
@@ -483,16 +555,12 @@ class _HomePageState extends State<HomePage> {
             borderRadius: BorderRadius.circular(8),
             child: Image.asset(
               imagePath,
-              // width: 156,
               width: double.infinity,
-              // height: 156,
               fit: BoxFit.cover,
               filterQuality: FilterQuality.high,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  // width: 156,
                   width: double.infinity,
-                  // height: 156,
                   color: AppColors.grey100,
                   child: const Icon(Icons.eco, size: 48, color: Colors.green),
                 );
@@ -500,9 +568,9 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SizedBox(height: 8),
-          Text( // Container 제거하고 직접 Text 사용
+          Text(
             title,
-            style: AppTypography.b2.withColor(AppColors.grey800,),
+            style: AppTypography.b2.withColor(AppColors.grey800),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -510,8 +578,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-
 
   // 각 탭 내용 선택
   Widget _buildContent() {
@@ -543,7 +609,7 @@ class _HomePageState extends State<HomePage> {
         child: Center(
           child: Text(
             text,
-            style: AppTypography.b4.withColor(AppColors.grey700,),
+            style: AppTypography.b4.withColor(AppColors.grey700),
           ),
         ),
       ),
@@ -644,7 +710,7 @@ class _HomePageState extends State<HomePage> {
             Text(
               label,
               style: AppTypography.c2.withColor(
-                isSelected ? AppColors.grey900 : AppColors.grey300,),
+                  isSelected ? AppColors.grey900 : AppColors.grey300),
             ),
           ],
         ),

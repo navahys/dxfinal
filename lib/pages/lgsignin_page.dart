@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:tiiun/design_system/colors.dart';
 import 'package:tiiun/design_system/typography.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:tiiun/services/firebase_service.dart'; // 추가
 
 class LGSigninPage extends StatefulWidget {
   const LGSigninPage({super.key});
@@ -15,6 +16,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _firebaseService = FirebaseService(); // FirebaseService 인스턴스 추가
   bool _isLoading = false;
   bool _obscurePassword = true;
 
@@ -76,7 +78,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
   // 로그인 버튼 활성화 여부
   bool get _isFormValid => _isEmailValid && _isPasswordValid;
 
-  // Firebase 로그인 처리
+  // Firebase 로그인 처리 - 수정된 부분
   Future<void> _handleSignIn() async {
     if (!_isFormValid) return;
 
@@ -85,17 +87,26 @@ class _LGSigninPageState extends State<LGSigninPage> {
     });
 
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      // FirebaseService를 사용한 로그인
+      final userModel = await _firebaseService.signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
 
-      if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          '/home',
-              (route) => false,
-        );
+      if (userModel != null) {
+        // 로그인 성공 - 홈 화면으로 이동
+        if (mounted) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/home',
+                (route) => false,
+          );
+        }
+      } else {
+        // 로그인 실패
+        if (mounted) {
+          _showErrorSnackBar('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+        }
       }
     } on FirebaseAuthException catch (e) {
       String errorMessage = _getErrorMessage(e.code);
@@ -104,7 +115,7 @@ class _LGSigninPageState extends State<LGSigninPage> {
       }
     } catch (e) {
       if (mounted) {
-        _showErrorSnackBar('알 수 없는 오류가 발생했습니다: $e');
+        _showErrorSnackBar('로그인 중 오류가 발생했습니다: $e');
       }
     } finally {
       if (mounted) {
@@ -123,6 +134,10 @@ class _LGSigninPageState extends State<LGSigninPage> {
         return '비밀번호가 올바르지 않습니다.';
       case 'invalid-email':
         return '유효하지 않은 이메일 형식입니다.';
+      case 'user-disabled':
+        return '비활성화된 계정입니다.';
+      case 'too-many-requests':
+        return '너무 많은 로그인 시도입니다. 잠시 후 다시 시도해주세요.';
       default:
         return '로그인에 실패했습니다.';
     }
@@ -296,7 +311,6 @@ class _LGSigninPageState extends State<LGSigninPage> {
   Widget _buildPasswordField() {
     Color getBorderColor() {
       if (_passwordError != null) return AppColors.point800;
-      if (_isPasswordValid) return AppColors.main700;  // 또는 AppColors.point900
       if (_isPasswordValid) return AppColors.main700;
       return AppColors.grey300;
     }
