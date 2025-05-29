@@ -202,314 +202,260 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // 홈 탭 내용
+  // 홈 탭
   Widget _buildHomeContent() {
     return Container(
       color: const Color(0xFFF3F5F2),
-      child: CustomScrollView(
-        slivers: [
-          // 상단 고정/유연 영역
-          SliverToBoxAdapter(
-            child: SafeArea(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: 400,
-                  maxHeight: 574,
-                ),
-                child: Column(
-                  children: [
-                    // 알림 아이콘
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20, right: 20),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/icons/functions/notification_off.svg',
-                            width: 24,
-                            height: 24,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Spacer(flex: 2),
-
-                    // 로고
-                    Container(
-                      child: SvgPicture.asset(
-                        'assets/images/tiiun_logo.svg',
-                        width: 80,
-                        height: 40,
-                      ),
-                    ),
-                    const Spacer(flex: 2),
-
-                    // 검색창
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 24),
-                      padding: const EdgeInsets.all(1.5),
-                      width: double.infinity,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF72ED98),
-                            Color(0xFF10BEBE),
-                          ],
-                          stops: [0.4, 1.0],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SafeArea(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, right: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/icons/functions/notification_off.svg',
+                          width: 24,
+                          height: 24,
                         ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF10BEBE).withOpacity(0.2),
-                            spreadRadius: -4,
-                            blurRadius: 16,
-                            offset: const Offset(0, 4),
-                          )
-                        ],
-                        borderRadius: BorderRadius.circular(60),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 21),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(57),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _textController,
-                                onSubmitted: (value) => _goToChatScreen(),
-                                decoration: InputDecoration(
-                                  hintText: '무엇이든 이야기하세요',
-                                  hintStyle: AppTypography.b4.withColor(AppColors.grey400),
-                                  border: InputBorder.none,
-                                  contentPadding: EdgeInsets.zero,
-                                ),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: _goToChatScreen,
-                              child: SvgPicture.asset(
-                                'assets/icons/functions/Paper_Plane.svg',
-                                width: 24,
-                                height: 24,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ),
-
-                    SizedBox(height: 12),
-
-                    // 퀵 액션 버튼들 (가로 스크롤)
-                    SizedBox(
-                      width: double.infinity,
-                      height: 32,
-                      child: Stack(
-                        children: [
-                          // 스크롤 가능한 버튼 리스트
-                          ListView(
-                            controller: _scrollController,
-                            scrollDirection: Axis.horizontal,
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            children: [
-                              _buildQuickActionWithIcon('이전 대화', 'assets/icons/functions/icon_dialog.svg'),
-                              const SizedBox(width: 8),
-                              _buildQuickActionText('자랑거리'),
-                              const SizedBox(width: 8),
-                              _buildQuickActionText('고민거리'),
-                              const SizedBox(width: 8),
-                              _buildQuickActionText('위로가 필요할 때'),
-                              const SizedBox(width: 8),
-                              _buildQuickActionText('시시콜콜'),
-                              const SizedBox(width: 8),
-                              _buildQuickActionText('끝말 잇기'),
-                              const SizedBox(width: 8),
-                              _buildQuickActionText('화가 나요'),
-                            ],
-                          ),
-                          // 왼쪽 그라데이션
-                          if (_showLeftGradient)
-                            Positioned(
-                              left: 0,
-                              top: 0,
-                              bottom: 0,
-                              child: IgnorePointer(
-                                child: Container(
-                                  width: 24,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        const Color(0xFFF3F5F2),
-                                        const Color(0xFFF3F5F2).withOpacity(0.0),
-                                      ],
-                                      stops: [0.1, 1.0],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          // 오른쪽 그라데이션
-                          if (_showRightGradient)
-                            Positioned(
-                              right: 0,
-                              top: 0,
-                              bottom: 0,
-                              child: IgnorePointer(
-                                child: Container(
-                                  width: 24,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.centerLeft,
-                                      end: Alignment.centerRight,
-                                      colors: [
-                                        const Color(0xFFF3F5F2).withOpacity(0.0),
-                                        const Color(0xFFF3F5F2),
-                                      ],
-                                      stops: [0.1, 1.0],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
+                  ),
+                  const SizedBox(height: 32),
+                  SvgPicture.asset(
+                    'assets/images/tiiun_logo.svg',
+                    width: 80,
+                    height: 40,
+                  ),
+                  const SizedBox(height: 32),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.all(1.5),
+                    width: double.infinity,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF72ED98), Color(0xFF10BEBE)],
+                        stops: [0.4, 1.0],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF10BEBE).withOpacity(0.2),
+                          spreadRadius: -4,
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                        )
+                      ],
+                      borderRadius: BorderRadius.circular(60),
                     ),
-
-                    SizedBox(height: 126),
-
-                    // 틔운 상태 창
-                    Container(
-                      width: 320,
-                      height: 56,
-                      margin: const EdgeInsets.symmetric(horizontal: 20),
-                      padding: const EdgeInsets.only(left: 12, right: 12, top: 16, bottom: 16),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 21),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: AppColors.grey100,
-                          width: 1,
-                        ),
+                        borderRadius: BorderRadius.circular(57),
                       ),
                       child: Row(
                         children: [
-                          SvgPicture.asset(
-                            'assets/icons/functions/temperature_off.svg',
-                            width: 24,
-                            height: 24,
+                          Expanded(
+                            child: TextField(
+                              controller: _textController,
+                              onSubmitted: (value) => _goToChatScreen(),
+                              decoration: InputDecoration(
+                                hintText: '무엇이든 이야기하세요',
+                                hintStyle: AppTypography.b4.withColor(AppColors.grey400),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
                           ),
-                          const SizedBox(width: 2),
-                          Text('적정 온도',
-                            style: AppTypography.b3.withColor(AppColors.grey700),
-                          ),
-                          const SizedBox(width: 12),
-                          Container(
-                            width: 1,
-                            height: 15,
-                            color: AppColors.grey200,
-                          ),
-                          const SizedBox(width: 12),
-                          SvgPicture.asset(
-                            'assets/icons/functions/light_on.svg',
-                            width: 24,
-                            height: 24,
-                          ),
-                          SizedBox(width: 2),
-                          Text('조명 밝기 낮음',
-                            style: AppTypography.b3.withColor(AppColors.grey700),
-                          ),
-                          const Spacer(),
-                          SvgPicture.asset(
-                            'assets/icons/functions/more.svg',
-                            width: 24,
-                            height: 24,
+                          GestureDetector(
+                            onTap: _goToChatScreen,
+                            child: SvgPicture.asset(
+                              'assets/icons/functions/Paper_Plane.svg',
+                              width: 24,
+                              height: 24,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              ),
-            ),
-          ),
-
-          // 겨울철 식물 관리 팁 섹션
-          SliverToBoxAdapter(
-            child: Center(
-              child: Container(
-                width: 360,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
                   ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 24, bottom: 36),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          '겨울철 식물 관리 팁 ⛄',
-                          style: AppTypography.s1.withColor(AppColors.grey900),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // 2열 그리드로 식물 관리 팁 카드들 배치
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20),
-                        child: Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 32,
+                    child: Stack(
+                      children: [
+                        ListView(
+                          controller: _scrollController,
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
                           children: [
-                            _buildPlantTipCard(
-                                '겨울철 물주기, 깍지벌레 관리 팁',
-                                'assets/images/plant_tip1.png'
-                            ),
-                            _buildPlantTipCard(
-                                '겨울 걱정 NO! 겨울철\n식물 이사 고민 줄여요',
-                                'assets/images/plant_tip2.png'
-                            ),
-                            _buildPlantTipCard(
-                                '실내 공기 정화 식물로\n겨울철 건강 지키기',
-                                'assets/images/plant_tip3.png'
-                            ),
-                            _buildPlantTipCard(
-                                '토분이 관리하기 쉽다고? 누가!',
-                                'assets/images/plant_tip4.png'
-                            ),
+                            _buildQuickActionWithIcon('이전 대화', 'assets/icons/functions/icon_dialog.svg'),
+                            const SizedBox(width: 8),
+                            _buildQuickActionText('자랑거리'),
+                            const SizedBox(width: 8),
+                            _buildQuickActionText('고민거리'),
+                            const SizedBox(width: 8),
+                            _buildQuickActionText('위로가 필요할 때'),
+                            const SizedBox(width: 8),
+                            _buildQuickActionText('시시콜콜'),
+                            const SizedBox(width: 8),
+                            _buildQuickActionText('끝말 잇기'),
+                            const SizedBox(width: 8),
+                            _buildQuickActionText('화가 나요'),
                           ],
                         ),
-                      ),
-
-                      const SizedBox(height: 36),
-
-                      Image.asset(
-                        'assets/images/ad_banner.png',
-                        width: double.infinity,
-                        height: 60,
-                        fit: BoxFit.fitWidth,
-                        filterQuality: FilterQuality.high,
-                      ),
-                    ],
+                        if (_showLeftGradient)
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: IgnorePointer(
+                              child: Container(
+                                width: 24,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      const Color(0xFFF3F5F2),
+                                      const Color(0xFFF3F5F2).withOpacity(0.0),
+                                    ],
+                                    stops: [0.1, 1.0],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        if (_showRightGradient)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            bottom: 0,
+                            child: IgnorePointer(
+                              child: Container(
+                                width: 24,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      const Color(0xFFF3F5F2).withOpacity(0.0),
+                                      const Color(0xFFF3F5F2),
+                                    ],
+                                    stops: [0.1, 1.0],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 126),
+                  Container(
+                    width: double.infinity,
+                    height: 56,
+                    margin: const EdgeInsets.symmetric(horizontal: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.grey100, width: 1),
+                    ),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset('assets/icons/functions/temperature_off.svg', width: 24, height: 24),
+                        const SizedBox(width: 2),
+                        Text('적정 온도', style: AppTypography.b3.withColor(AppColors.grey700)),
+                        const SizedBox(width: 12),
+                        Container(width: 1, height: 15, color: AppColors.grey200),
+                        const SizedBox(width: 12),
+                        SvgPicture.asset('assets/icons/functions/light_on.svg', width: 24, height: 24),
+                        const SizedBox(width: 2),
+                        Text('조명 밝기 낮음', style: AppTypography.b3.withColor(AppColors.grey700)),
+                        const Spacer(),
+                        SvgPicture.asset('assets/icons/functions/more.svg', width: 24, height: 24),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        topRight: Radius.circular(16),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 24, bottom: 36),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '겨울철 식물 관리 팁 \u{26C4}',
+                            style: AppTypography.s1.withColor(AppColors.grey900),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          Container(
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                const cardWidth = 156.0;
+                                final screenWidth = constraints.maxWidth;
+
+                                // 카드 2개와 좌우 여백 고려한 가변 간격 계산
+                                double spacing = (screenWidth - (cardWidth * 2)) / 3;
+
+                                // 최소 간격 보장
+                                if (spacing < 8) spacing = 8;
+
+                                return Wrap(
+                                  spacing: spacing,
+                                  runSpacing: 16,
+                                  children: [
+                                    _buildFixedWidthPlantTipCard('겨울철 물주기, 깍지벌레 관리 팁', 'assets/images/plant_tip1.png'),
+                                    _buildFixedWidthPlantTipCard('겨울 걱정 NO! 겨울철\n식물 이사 고민 줄여요', 'assets/images/plant_tip2.png'),
+                                    _buildFixedWidthPlantTipCard('실내 공기 정화 식물로\n겨울철 건강 지키기', 'assets/images/plant_tip3.png'),
+                                    _buildFixedWidthPlantTipCard('토분이 관리하기 쉽다고? 누가!', 'assets/images/plant_tip4.png'),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+
+                          const SizedBox(height: 24),
+                          AspectRatio(
+                            aspectRatio: 6.0,
+                            child: Image.asset(
+                              'assets/images/ad_banner.png',
+                              width: double.infinity,
+                              fit: BoxFit.fitWidth,
+                              filterQuality: FilterQuality.high,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -546,38 +492,46 @@ class _HomePageState extends State<HomePage> {
 
   // 2열 그리드용 식물 관리 팁 카드 위젯
   Widget _buildPlantTipCard(String title, String imagePath) {
-    return SizedBox(
-      width: 156,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4), // 카드 간 가로 간격을 조절
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min, // 핵심!
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              imagePath,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              filterQuality: FilterQuality.high,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: double.infinity,
-                  color: AppColors.grey100,
-                  child: const Icon(Icons.eco, size: 48, color: Colors.green),
-                );
-              },
+          AspectRatio(
+            aspectRatio: 1.0,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.high,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: AppColors.grey100,
+                    child: const Icon(Icons.eco, size: 48, color: Colors.green),
+                  );
+                },
+              ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             title,
-            style: AppTypography.b2.withColor(AppColors.grey800),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
+            style: AppTypography.b2.copyWith(
+              color: AppColors.grey800,
+              height: 1.3,
+            ),
           ),
         ],
       ),
     );
   }
+
+
+
 
   // 각 탭 내용 선택
   Widget _buildContent() {
@@ -682,6 +636,45 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  Widget _buildFixedWidthPlantTipCard(String title, String imagePath) {
+    return SizedBox(
+      width: 156, // 원하는 고정 가로 길이
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AspectRatio(
+            aspectRatio: 1.0,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                imagePath,
+                fit: BoxFit.cover,
+                filterQuality: FilterQuality.high,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: AppColors.grey100,
+                    child: const Icon(Icons.eco, size: 48, color: Colors.green),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: AppTypography.b2.copyWith(
+              color: AppColors.grey800,
+              height: 1.3,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget _buildNavItem({
     required int index,

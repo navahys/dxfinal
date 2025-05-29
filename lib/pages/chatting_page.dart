@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:tiiun/services/firebase_service.dart';
 import 'package:tiiun/services/openai_service.dart';
 import 'package:tiiun/models/conversation_model.dart';
@@ -48,16 +49,24 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-          '틔운이와 대화',
-          style: AppTypography.b2.withColor(AppColors.grey900),
-        ),
+        toolbarHeight: 56,
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: AppColors.grey700),
+          padding: EdgeInsets.fromLTRB(0, 20, 0, 12),
+          icon: SvgPicture.asset(
+            'assets/icons/functions/back.svg',
+            width: 24,
+            height: 24,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          Container(
+            padding: EdgeInsets.fromLTRB(0, 20, 20, 12),
+            child: SvgPicture.asset('assets/icons/functions/record.svg', width: 24, height: 24,),
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -116,8 +125,20 @@ class _ChatScreenState extends State<ChatScreen> {
           maxWidth: MediaQuery.of(context).size.width * 0.8,
         ),
         decoration: BoxDecoration(
-          color: isUser ? AppColors.main700 : AppColors.grey100,
-          borderRadius: BorderRadius.circular(18),
+          color: isUser ? AppColors.main100 : AppColors.grey50,
+          borderRadius: isUser
+              ? BorderRadius.only(
+            topLeft: Radius.circular(16),
+            topRight: Radius.zero,
+            bottomLeft: Radius.circular(16),
+            bottomRight: Radius.circular(16),
+          )
+              : BorderRadius.only(
+            topLeft: Radius.zero,
+            topRight: Radius.circular(16),
+            bottomLeft: Radius.circular(16),
+            bottomRight: Radius.circular(16),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -125,14 +146,7 @@ class _ChatScreenState extends State<ChatScreen> {
             Text(
               message.content,
               style: AppTypography.b3.withColor(
-                isUser ? Colors.white : AppColors.grey900,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              message.formattedTime,
-              style: AppTypography.c2.withColor(
-                isUser ? Colors.white70 : AppColors.grey500,
+                isUser ? AppColors.grey800 : AppColors.grey900,
               ),
             ),
           ],
@@ -149,15 +163,20 @@ class _ChatScreenState extends State<ChatScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: AppColors.grey100,
-            borderRadius: BorderRadius.circular(18),
+            color: AppColors.grey50,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.zero,
+              topRight: Radius.circular(16),
+              bottomLeft: Radius.circular(16),
+              bottomRight: Radius.circular(16),
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '틔운이가 입력 중',
-                style: AppTypography.b4.withColor(AppColors.grey600),
+                '입력 중',
+                style: AppTypography.b3.withColor(AppColors.grey900),
               ),
               SizedBox(width: 8),
               SizedBox(
@@ -165,7 +184,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 height: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.grey600),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.grey900),
                 ),
               ),
             ],
@@ -197,32 +216,25 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessageInput() {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 3,
-            offset: const Offset(0, -1),
-          ),
-        ],
-      ),
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       child: SafeArea(
         child: Row(
           children: [
             Expanded(
               child: Container(
+                width: double.infinity,
+                height: 64,
                 decoration: BoxDecoration(
-                  color: AppColors.grey100,
-                  borderRadius: BorderRadius.circular(25),
+                  borderRadius: BorderRadius.circular(48),
+                  border: Border.all(
+                    color: AppColors.grey200,
+                  ),
                 ),
                 child: TextField(
                   controller: _messageController,
                   decoration: InputDecoration(
-                    hintText: '메시지를 입력하세요...',
-                    hintStyle: AppTypography.b3.withColor(AppColors.grey500),
+                    hintText: '무엇이든 이야기하세요',
+                    hintStyle: AppTypography.b4.withColor(AppColors.grey400),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 20,
