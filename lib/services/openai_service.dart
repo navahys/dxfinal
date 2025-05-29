@@ -1,10 +1,9 @@
-// lib/services/openai_service.dart (GitHub용 - API 키 제거됨)
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class OpenAIService {
   // 🚫 보안상 API 키는 별도 관리 필요
-  static const String _apiKey = ''; // GitHub에는 빈 문자열로 업로드
+  static const String _apiKey = '';
 
   // ✅ 올바른 API URL
   static const String _baseUrl = 'https://api.openai.com/v1';
