@@ -1,4 +1,4 @@
-# myapp
+# tiiun_buddy
 
 A new Flutter project.
 

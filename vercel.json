@@ -1,0 +1,8 @@
+{
+  "github": {
+    "silent": true
+  },
+  "buildCommand": "flutter build web",
+  "outputDirectory": "build/web",
+  "installCommand": "if [ -e pubspec.yaml ]; then curl -fsSL https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.16.5-stable.tar.xz | tar -xJ && export PATH=\"$PATH:`pwd`/flutter/bin\" && flutter doctor && flutter pub get; else echo 'Not a Flutter project'; fi"
+}

@@ -1,0 +1,140 @@
+
+  /// 🔊 🆕 개선된 고품질 음성 생성 (OpenAI TTS Service 활용)
+  Future<String> _generateHighQualityAudioWithService({
+    required String text,
+    String voice = 'nova',
+  }) async {
+    try {
+      // 🆕 주입받은 TTS 서비스 사용
+      AppLogger.info('Gpt4oAudioService: Using OpenAI TTS Service for high-quality audio generation');
+      
+      final audioPath = await _ttsService.generateSpeech(
+        text: text,
+        voice: voice,
+        model: 'tts-1-hd',
+        responseFormat: 'mp3',
+        speed: 1.0,
+      );
+      
+      AppLogger.info('Gpt4oAudioService: High-quality audio generated via TTS service: $audioPath');
+      return audioPath;
+    } catch (e) {
+      AppLogger.error('Gpt4oAudioService: Failed to generate audio via TTS service: $e');
+      
+      // 🔄 폴백: 기존 방식 사용
+      AppLogger.warning('Gpt4oAudioService: Falling back to direct TTS API call');
+      return await _generateHighQualityAudioDirect(text: text, voice: voice);
+    }
+  }
+
+  /// 🔊 기존 직접 TTS API 호출 방식 (폴백용)
+  Future<String> _generateHighQualityAudioDirect({
+    required String text,
+    String voice = 'nova',
+  }) async {
+    final requestBody = jsonEncode({
+      'model': 'tts-1-hd',
+      'input': text,
+      'voice': voice,
+      'response_format': 'mp3',
+      'speed': 1.0,
+    });
+
+    final response = await http.post(
+      Uri.parse('https://api.openai.com/v1/audio/speech'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $_apiKey',
+      },
+      body: requestBody,
+    ).timeout(const Duration(seconds: 30));
+
+    if (response.statusCode == 200) {
+      final tempDir = await getTemporaryDirectory();
+      final filePath = '${tempDir.path}/${_uuid.v4()}.mp3';
+      final file = File(filePath);
+      await file.writeAsBytes(response.bodyBytes);
+      
+      return filePath;
+    } else {
+      throw AppError(
+        type: AppErrorType.server,
+        code: response.statusCode.toString(),
+        message: 'TTS-1-HD API 오류가 발생했습니다.',
+        details: response.body,
+      );
+    }
+  }
+
+  /// 🎨 음성 스타일 최적화
+  String recommendVoiceStyle({
+    required String emotionType,
+    required String conversationType,
+  }) {
+    switch (conversationType) {
+      case '위로가 필요할 때':
+      case '고민거리':
+        return emotionType == 'sadness' ? 'shimmer' : 'nova';
+      case '자랑거리':
+      case '시시콜콜':
+        return 'echo';
+      case '화가 나요':
+        return 'onyx';
+      default:
+        return 'alloy';
+    }
+  }
+
+  /// 🧠 음성 기반 감정 분석
+  Future<Map<String, dynamic>> analyzeAudioEmotion(String audioFilePath) async {
+    try {
+      final transcription = await _transcribeAudio(audioFilePath);
+      
+      const analysisPrompt = '''
+다음 음성 대화 텍스트를 분석하여 사용자의 감정 상태를 파악하세요.
+음성으로 전달된 내용이므로 말의 톤, 속도, 감정적 뉘앙스를 고려하여 분석하세요.
+
+JSON 형식으로 응답해주세요:
+{
+  "emotion": "주요 감정 (joy, sadness, anger, fear, surprise, neutral)",
+  "intensity": "감정 강도 (1-10)",
+  "confidence": "분석 확신도 (0.0-1.0)",
+  "emotional_indicators": ["감정을 나타내는 지표들"],
+  "recommended_response_tone": "추천 응답 톤"
+}
+''';
+
+      final analysisResponse = await _generateAudioResponse(
+        userMessage: '$analysisPrompt\n\n분석할 텍스트: $transcription',
+        systemPrompt: '당신은 음성 기반 감정 분석 전문가입니다.',
+      );
+
+      try {
+        return jsonDecode(analysisResponse);
+      } catch (e) {
+        return {
+          'emotion': 'neutral',
+          'intensity': 5,
+          'confidence': 0.5,
+          'emotional_indicators': ['분석 실패'],
+          'recommended_response_tone': 'balanced',
+          'raw_analysis': analysisResponse,
+        };
+      }
+    } catch (e) {
+      AppLogger.error('Gpt4oAudioService: Audio emotion analysis failed: $e');
+      return {
+        'emotion': 'neutral',
+        'intensity': 1,
+        'confidence': 0.0,
+        'error': e.toString(),
+      };
+    }
+  }
+
+  /// 🔄 리소스 정리
+  Future<void> dispose() async {
+    AppLogger.info('Gpt4oAudioService: Disposing resources');
+    // TTS 서비스는 Provider에서 관리되므로 별도 dispose 불필요
+  }
+}
